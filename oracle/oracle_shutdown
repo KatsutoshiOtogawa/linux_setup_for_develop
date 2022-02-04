@@ -1,0 +1,7 @@
+#!/usr/bin/bash
+
+if getent passwd oracle > /dev/null; then
+  # shutdown. tranzaction is rollbacking.
+  su - oracle -c "echo shutdown immediate; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba"
+  su - oracle -c "/opt/oracle/product/18c/dbhomeXE/bin/lsnrctl stop"
+fi

@@ -1,0 +1,7 @@
+#!/usr/bin/bash
+
+if getent passwd oracle > /dev/null; then
+  # mount,open and start oracle instant.
+  su - oracle -c "echo startup; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba"
+  su - oracle -c "/opt/oracle/product/18c/dbhomeXE/bin/lsnrctl start"
+fi

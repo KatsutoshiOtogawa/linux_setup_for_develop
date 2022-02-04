@@ -1,0 +1,7 @@
+# set oracle environment variable
+export ORACLE_SID=XE
+export ORAENV_ASK=NO
+export ORACLE_HOME=/opt/oracle/product/18c/dbhomeXE
+export ORACLE_BASE=/opt/oracle
+export PATH=$PATH:$ORACLE_HOME/bin
+export ORACLE_PASSWORD=$ORACLE_PASSWORD
