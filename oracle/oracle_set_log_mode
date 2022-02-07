@@ -1,25 +1,97 @@
 #!/usr/bin/bash
+#!/usr/bin/bash
+#
+# utils, often use.
+
+#######################################
+# check super user.
+# Globals:
+#   UID
+#   EUID
+# Arguments:
+#   None
+# Outputs:
+#   None
+# Returns:
+#   0 if root user, non-zero on non root user.
+# Example:
+#   is_useruser #=> 0 root user
+#######################################
+function is_superuser {
+
+  if [ ${UID} = "0" ] || [ ${EUID} = "0" ]; then
+    return 0
+  fi
+  return 1
+}
 
 function set_log_mode {
-  if getent passwd oracle > /dev/null; then
-    # check log_mode
-    # select log_mode from v$database;
-    # change oracle databse mode to archive log mode.
-    local mode=$1
-    if [ $mode == "archivelog" ]; then
-      su - oracle -c "echo shutdown immediate; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba"
-      su - oracle -c "echo startup mount; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba"
-      su - oracle -c "ALTER DATABASE ARCHIVELOG; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba"
-      su - oracle -c "ALTER DATABASE OPEN; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba"
-    elif [ $mode == "noarchivelog" ]; then
-      su - oracle -c "echo shutdown immediate; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba"
-      su - oracle -c "echo startup mount; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba"
-      su - oracle -c "ALTER DATABASE NOARCHIVELOG; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba"
-      su - oracle -c "ALTER DATABASE OPEN; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba"
+  # if getent passwd oracle > /dev/null; then
+  #   postgresもそうだが、必ずrootの権限でなくてpostgresやoracleの権限で実行する必要がある。
+  #   # mount,open and start oracle instant.
+  #   su - oracle -c "echo startup; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba"
+  #   su - oracle -c "/opt/oracle/product/18c/dbhomeXE/bin/lsnrctl start"
+  # fi
+
+
+  local mode=$1
+  if [ $mode == "archivelog" ]; then
+    if [ $(whoami) = "oracle" ]; then
+      # それぞれのコマンドがoracleかrootしかつかないのでこれで良い。
+      echo shutdown immediate; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba
+      echo startup mount; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba
+      echo ALTER DATABASE ARCHIVELOG; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba
+      echo ALTER DATABASE OPEN; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba
+    elif  is_superuser; then
+      # 再起処理
+      su - oracle -c "/usr/local/bin/oracle_set_log_mode archivelog"
     else
-      echo "unkown log_mode" >&2
+      echo "require oracle or root user priviledge!" >&2
       return 1
     fi
+  elif [ $mode == "noarchivelog" ]; then
+    if [ $(whoami) = "oracle" ]; then
+      # それぞれのコマンドがoracleかrootしかつかないのでこれで良い。
+      echo shutdown immediate; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba
+      echo startup mount; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba
+      echo ALTER DATABASE NOARCHIVELOG; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba
+      echo ALTER DATABASE OPEN; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba
+    elif  is_superuser; then
+      # 再起処理
+      su - oracle -c "/usr/local/bin/oracle_set_log_mode noarchivelog"
+    else
+      echo "require oracle or root user priviledge!" >&2
+      return 1
+    fi
+  else
+    echo "unkown log_mode" >&2
+    return 1
   fi
+
 }
+
+
+# function set_log_mode {
+#   if getent passwd oracle > /dev/null; then
+#     # check log_mode
+#     # select log_mode from v$database;
+#     # change oracle databse mode to archive log mode.
+#     local mode=$1
+#     if [ $mode == "archivelog" ]; then
+#       # pg_ctl start -l logfile に相当する。
+#       su - oracle -c "echo shutdown immediate; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba"
+#       su - oracle -c "echo startup mount; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba"
+#       su - oracle -c "echo ALTER DATABASE ARCHIVELOG; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba"
+#       su - oracle -c "echo ALTER DATABASE OPEN; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba"
+#     elif [ $mode == "noarchivelog" ]; then
+#       su - oracle -c "echo shutdown immediate; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba"
+#       su - oracle -c "echo startup mount; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba"
+#       su - oracle -c "echo ALTER DATABASE NOARCHIVELOG; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba"
+#       su - oracle -c "echo ALTER DATABASE OPEN; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba"
+#     else
+#       echo "unkown log_mode" >&2
+#       return 1
+#     fi
+#   fi
+# }
 set_log_mode $@
