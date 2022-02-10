@@ -4,4 +4,5 @@ export ORAENV_ASK=NO
 export ORACLE_HOME=/opt/oracle/product/18c/dbhomeXE
 export ORACLE_BASE=/opt/oracle
 export PATH=$PATH:$ORACLE_HOME/bin
-export ORACLE_PASSWORD=$ORACLE_PASSWORD
+export LANG=en_US.UTF-8
+export NLS_LANG=American_America.AL32UTF8

@@ -54,8 +54,15 @@ END
 
   if ls /etc | grep fedora-release > /dev/null; then
     os_type=fedora
-  elif ls /etc | grep redhat-release > /dev/null; then
+    # oracle linux has redhat-relese, except oracle.
+  elif ls /etc | grep redhat-release > /dev/null && ! ls /etc | grep oracle-release > /dev/null; then
     os_type=rhel
+  elif ls /etc | grep oracle-release > /dev/null; then
+    os_type=oracle
+  elif ls /etc | grep centos-release > /dev/null; then
+    os_type=centos
+  elif cat /etc/os-release | grep "Amazon Linux 2" > /dev/null; then
+    os_type=amazonlinux2
     # debian systems except ubuntu.
   elif ls /etc | grep debian_version > /dev/null; then
     os_type=debian
@@ -63,6 +70,8 @@ END
     os_type=ubuntu
   elif ls /etc | grep SuSE-release > /dev/null; then
     os_type=SuSE
+  elif ls /etc | grep arch-release > /dev/null; then
+    os_type=arch
     # if you use BSD,
   elif uname | grep -e Darwin -e BSD > /dev/null; then
     os_type=$(uname | grep -e Darwin -e BSD)
@@ -81,19 +90,22 @@ function install_GitHubCli {
   local os=$(os_type)
 
   # install github cli command
-  if ! which gh > /dev/null/; then
+  if ! command -v gh > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/etc/apt/trusted.gpg.d/githubcli-archive-keyring.gpg
       echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/trusted.gpg.d/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
       sudo apt update
       sudo apt install -y gh
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
       sudo dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
-      sudo dnf install gh
+      sudo dnf install -y gh
+    elif [ "${os}" == "amazonlinux2" ]; then
+      sudo yum config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
+      sudo yum install -y gh
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper addrepo https://cli.github.com/packages/rpm/gh-cli.repo
-      sudo zypper ref
-      sudo zypper install gh
+      sudo zypper -y ref
+      sudo zypper -y install gh
     fi
   fi
 
@@ -113,11 +125,11 @@ function install_vscode {
 
   local file_path=$(dirname $0)
   local os=$(os_type)
-  if ! which code > /dev/null; then
+  if ! command -v code > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       wget --content-disposition "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64" -P .cache
       .cache/code*.deb
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
       wget --content-disposition "https://code.visualstudio.com/sha/download?build=stable&os=linux-rpm-x64" -P .cache
       .cache/code*.deb
     elif [ "${os}" == "SuSE" ]; then
@@ -137,14 +149,14 @@ function install_vscode {
 function install_powershell {
 
   local os=$(os_type)
-  if ! which pwsh > /dev/null; then
+  if ! command -v pwsh > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       wget https://github.com/PowerShell/PowerShell/releases/download/v7.2.1/powershell-lts_7.2.1-1.deb_amd64.deb \
         && apt install -y ./powershell-lts_7.2* \
         && rm ./powershell-lts_7.2
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
       wget https://github.com/PowerShell/PowerShell/releases/download/v7.2.1/powershell-lts-7.2.1-1.rh.x86_64.rpm \
-        && apt install -y ./powershell-lts_7.2* \
+        && dnf install -y ./powershell-lts_7.2* \
         && rm ./powershell-lts_7.2
     elif [ "${os}" == "SuSE" ]; then
       wget https://github.com/PowerShell/PowerShell/releases/download/v7.2.1/powershell-lts-7.2.1-1.rh.x86_64.rpm \
@@ -157,7 +169,7 @@ function install_powershell {
 
 function install_docker {
   local os=$(os_type)
-  if ! which docker > /dev/null; then
+  if ! command -v docker > /dev/null; then
     if [ "${os}" == "debian" ]; then
       sudo apt-get update
       sudo apt-get install -y \
@@ -200,16 +212,38 @@ function install_docker {
 }
 
 
-function install_oracle {
+function install_oracle_18c {
 
+  local file_path=$(dirname $0)
   local os=$(os_type)
-  if ! which pwsh > /dev/null; then
+  # 帰る
+  if ! command -v pwsh > /dev/null; then
     if [ "${os}" == "fedora" ]; then
-      ./oracle/fedora/setup.sh
+      sudo $file_path/oracle-18c/fedora/setup.sh
     elif [ "${os}" == "rhel" ]; then
-      wget https://github.com/PowerShell/PowerShell/releases/download/v7.2.1/powershell-lts-7.2.1-1.rh.x86_64.rpm \
-        && apt install -y ./powershell-lts_7.2* \
-        && rm ./powershell-lts_7.2
+      sudo $file_path/oracle-18c/rhel/setup.sh
+    elif [ "${os}" == "oracle" ]; then
+      sudo $file_path/oracle-18c/oraclelinux/setup.sh
+    elif [ "${os}" == "amazonlinux2" ]; then
+      sudo $file_path/oracle-18c/amazonlinux2/setup.sh
+    fi
+  fi
+
+}
+
+function install_oracle_21c {
+
+  local file_path=$(dirname $0)
+  local os=$(os_type)
+  if ! command -v pwsh > /dev/null; then
+    if [ "${os}" == "fedora" ]; then
+      sudo $file_path/oracle-21c/fedora/setup.sh
+    elif [ "${os}" == "rhel" ]; then
+      sudo $file_path/oracle-21c/rhel/setup.sh
+    elif [ "${os}" == "oracle" ]; then
+      sudo $file_path/oracle-21c/oraclelinux/setup.sh
+    elif [ "${os}" == "amazonlinux2" ]; then
+      sudo $file_path/oracle-21c/amazonlinux2/setup.sh
     fi
   fi
 
@@ -228,36 +262,38 @@ function load_env {
 function install_essential {
 
   local os=$(os_type)
-  if ! which git > /dev/null; then
+  if ! command -v git > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y git
     elif [ "${os}" == "fedora" ]; then
       sudo dnf install -y git-all
     elif [ "${os}" == "rhel" ]; then
-      mkdir .cache
-      wget https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.9.5.tar.gz
-      tar zxvf git-2* -C .cache
-      subscription-manager repos --enable codeready-builder-for-rhel-8-$(arch)-rpms
-      dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+      sudo subscription-manager repos --enable codeready-builder-for-rhel-8-$(arch)-rpms
+      sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+      sudo dnf install -y git
+    elif [ "${os}" == "oracle" ]; then
+      sudo dnf install -y git
+    elif [ "${os}" == "amazonlinux2" ]; then
+      sudo yum install -y git
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install git
     fi
   fi
 
-  if ! which vim > /dev/null; then
+  if ! command -v vim > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y vim
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
       sudo dnf install -y vim
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install vim
     fi
   fi
 
-  if ! which locate > /dev/null; then
+  if ! command -v locate > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y mlocate
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
       sudo dnf install -y mlocate
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install mlocate
@@ -265,22 +301,27 @@ function install_essential {
   fi
 
   # environment variable display dont use,
-  if ! which xclip > /dev/null && [ -z "${DISPLAY}" ] ; then
+  if ! command -v xclip > /dev/null && [ -z "${DISPLAY}" ] ; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y xclip
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ]; then
-      sudo dnf install -y xclipboard
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y xclip
+    elif [ "${os}" == "amazonlinux2" ]; then
+      sudo amazon-linux-extras install epel -y
+      sudo yum install -y xclip
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install xclipboard
     fi
   fi
 
   # install pwmake, pwmake generate password following os security policy.
-  if ! which mlocate > /dev/null; then
+  if ! command -v pwmake > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y libpwquality-tools
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
       sudo dnf install -y libpwquality
+    elif [ "${os}" == "amazonlinux2" ]; then
+      sudo yum install -y libpwquality
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install libpwquality
     fi
@@ -295,10 +336,30 @@ function register_subscription {
   if [ "${os}" == "rhel" ]; then
     # register system
     # and register auto subscription
-    subscription-manager register \
+    sudo subscription-manager register \
       --username $REGISTER_SUBSCRIPTION_USERNAME \
       --password $REGISTER_SUBSCRIPTION_PASSWORD \
       --autosubscribe
+  fi
+
+}
+
+function set_locale {
+
+  local os=$(os_type)
+
+  echo export LANG=en_US.UTF-8 >> $HOME/.bashrc
+
+  if [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    # fix language pack missing. this is a rhel8 and centos8 bug. (https://unixcop.com/fix-problem-failed-to-set-locale-defaulting-to-c-utf-8-in-centos-8-rhel-8/)
+    sudo dnf install -y glibc-all-langpacks langpacks-en
+
+    # if grep LC_ALL= $HOME/.bash_profile > /dev/null; then
+    #   echo export LC_ALL=C >> $HOME/.bashrc
+    # fi
+    # if sudo grep LC_ALL= /root/.bash_profile > /dev/null; then
+    #   sudo echo export LC_ALL=C >> /root/.bashrc
+    # fi
   fi
 
 }
@@ -308,13 +369,17 @@ function setup {
   # load
   load_env
 
+  set_locale
+
   register_subscription
 
   install_essential
 
-# INSTALL_POSTGRES=
-# INSTALL_MARIADB=
-  mkdir .cache
+  # if doesnot exists directory, create.
+  if [ ! -d .cache ]; then
+    mkdir .cache
+  fi
+
   if [ "${INSTALL_GITHUBCLI}" == "yes" ]; then
     install_GitHubCli
   fi
@@ -332,8 +397,17 @@ function setup {
   if [ "${INSTALL_POWERSHELL}" == "yes" ]; then
     install_powershell
   fi
-  if [ "${INSTALL_ORACLE}" == "yes" ]; then
-    install_oracle
+
+  if [ "${INSTALL_ORACLE_18C}" == "yes" ] || [ "${INSTALL_ORACLE_21C}" == "yes" ]; then
+    if [ "${INSTALL_ORACLE_18C}" == "yes" ] && [ "${INSTALL_ORACLE_21C}" == "yes" ]; then
+
+      echo "select oracle18c or oracle21c" >&2
+      return 1
+    elif [ "${INSTALL_ORACLE_18C}" == "yes" ]; then
+      install_oracle_18c
+    elif [ "${INSTALL_ORACLE_21C}" == "yes" ]; then
+      install_oracle_21c
+    fi
   fi
 
 }

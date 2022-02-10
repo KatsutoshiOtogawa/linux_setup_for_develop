@@ -1,5 +1,4 @@
 #!/usr/bin/bash
-#!/usr/bin/bash
 #
 # utils, often use.
 
@@ -38,10 +37,10 @@ function set_log_mode {
   if [ $mode == "archivelog" ]; then
     if [ $(whoami) = "oracle" ]; then
       # それぞれのコマンドがoracleかrootしかつかないのでこれで良い。
-      echo shutdown immediate; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba
-      echo startup mount; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba
-      echo ALTER DATABASE ARCHIVELOG; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba
-      echo ALTER DATABASE OPEN; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba
+      echo "shutdown immediate;"        | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba
+      echo "startup mount;"             | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba
+      echo "ALTER DATABASE ARCHIVELOG;" | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba
+      echo "ALTER DATABASE OPEN;"       | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba
     elif  is_superuser; then
       # 再起処理
       su - oracle -c "/usr/local/bin/oracle_set_log_mode archivelog"
@@ -52,10 +51,10 @@ function set_log_mode {
   elif [ $mode == "noarchivelog" ]; then
     if [ $(whoami) = "oracle" ]; then
       # それぞれのコマンドがoracleかrootしかつかないのでこれで良い。
-      echo shutdown immediate; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba
-      echo startup mount; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba
-      echo ALTER DATABASE NOARCHIVELOG; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba
-      echo ALTER DATABASE OPEN; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba
+      echo "shutdown immediate;"          | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba
+      echo "startup mount;"               | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba
+      echo "ALTER DATABASE NOARCHIVELOG;" | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba
+      echo "ALTER DATABASE OPEN;"         | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba
     elif  is_superuser; then
       # 再起処理
       su - oracle -c "/usr/local/bin/oracle_set_log_mode noarchivelog"
