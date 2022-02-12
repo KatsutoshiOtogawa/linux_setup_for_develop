@@ -5,7 +5,7 @@
 function vagrant_provision {
   vagrant ssh -c "
     cd /vagrant_data
-    ./provision.sh
+    ./invoke.sh
   "
 }
 

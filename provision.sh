@@ -72,6 +72,8 @@ END
     os_type=SuSE
   elif ls /etc | grep arch-release > /dev/null; then
     os_type=arch
+  elif ls /etc | grep gentoo-release > /dev/null; then
+    os_type=gentoo
     # if you use BSD,
   elif uname | grep -e Darwin -e BSD > /dev/null; then
     os_type=$(uname | grep -e Darwin -e BSD)
@@ -278,6 +280,9 @@ function install_essential {
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install git
     fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add git
+    fi
   fi
 
   if ! command -v vim > /dev/null; then
@@ -287,6 +292,9 @@ function install_essential {
       sudo dnf install -y vim
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install vim
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add git
     fi
   fi
 
@@ -324,6 +332,9 @@ function install_essential {
       sudo yum install -y libpwquality
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install libpwquality
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add libpwquality
     fi
   fi
 
@@ -364,8 +375,99 @@ function set_locale {
 
 }
 
-function setup {
+function set_package_mirror {
 
+  if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+    : pass
+  elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    : pass
+  elif [ "${os}" == "amazonlinux2" ]; then
+    : pass
+  elif [ "${os}" == "SuSE" ]; then
+    : pass
+  elif [ "${os}" == "gentoo" ]; then
+    : pass
+    # $FreeBSD$
+#
+# To disable this repository, instead of modifying or removing this file,
+# create a /usr/local/etc/pkg/repos/FreeBSD.conf file:
+#
+#   mkdir -p /usr/local/etc/pkg/repos
+#   echo "FreeBSD: { enabled: no }" > /usr/local/etc/pkg/repos/FreeBSD.conf
+#
+
+# FreeBSD: {
+#   url: "pkg+http://pkg.FreeBSD.org/${ABI}/quarterly",
+#   mirror_type: "srv",
+#   signature_type: "fingerprints",
+#   fingerprints: "/usr/share/keys/pkg",
+#   enabled: yes
+# }
+  elif [ "${os}" == "OpenBSD" ]; then
+    # prior japan mirror to usa.
+    sed -i '1ihttps://ftp.riken.jp/pub/OpenBSD' /etc/installurl
+    # export PKG_PATH="ftp://ftp.iij.ad.jp/pub/OpenBSD/$(uname -r)/packages/$(uname -m)"
+  fi
+}
+
+function install_system_backup_and_snapshot {
+  if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+    # update package list
+    sudo apt update
+    # snapshotを撮ってsystemをいつでも戻せるようにする。
+    sudo apt -y install timeshift
+  elif [ "${os}" == "gentoo" ]; then
+    : pass
+  elif [ "${os}" == "FreeBSD" ]; then
+    sudo freebsd-update fetch
+  elif [ "${os}" == "OpenBSD" ]; then
+    sudo syspatch
+  fi
+}
+
+function install_security_update {
+  if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+    # update package list
+    sudo apt update
+    # snapshotを撮ってsystemをいつでも戻せるようにする。
+    sudo unattended-upgrade --dry-run
+    # ok かどうか聞いてからupdate
+    sudo unattended-upgrade
+  elif [ "${os}" == "gentoo" ]; then
+    : pass
+  elif [ "${os}" == "FreeBSD" ]; then
+    sudo freebsd-update fetch
+  elif [ "${os}" == "OpenBSD" ]; then
+    sudo syspatch
+  fi
+}
+
+function install_desktop {
+  if [ "${os}" == "gentoo" ]; then
+    : pass
+  elif [ "${os}" == "FreeBSD" ]; then
+    : pass
+  elif [ "${os}" == "OpenBSD" ]; then
+    # export PKG_PATH="ftp://ftp.iij.ad.jp/pub/OpenBSD/$(uname -r)/packages/$(uname -m)"
+    # can't install openbsd6.9 or openbsd 7.0
+    # sudo pkg_add xfce xfce-extras consolekit2 scim-anthy
+    # pkg_add mixfont-mplus-ipa-20060520p7 mplus-fonts-063a
+  fi
+}
+
+function install_font_language {
+  if [ "${os}" == "gentoo" ]; then
+    : pass
+  elif [ "${os}" == "FreeBSD" ]; then
+    : pass
+  elif [ "${os}" == "OpenBSD" ]; then
+    # sudo pkg_add mixfont-mplus-ipa-20060520p7 mplus-fonts-063a
+  fi
+}
+
+function setup {
+  # export PKG_PATH="ftp://ftp.iij.ad.jp/pub/OpenBSD/$(uname -r)/packages/$(uname -m)"
+  # export PKG_CACHE="$HOME/Downloads/OpenBSD/$(uname -r)-$(uname -m)-packages/"
   # load
   load_env
 
