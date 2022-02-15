@@ -353,6 +353,142 @@ function install_essential {
 
 }
 
+function install_offensive_security {
+
+  local os=$(os_type)
+  if ! command -v nmap > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y nmap
+    elif [ "${os}" == "fedora" ]; then
+      sudo dnf install -y nmap
+    elif [ "${os}" == "rhel" ]; then
+      sudo dnf install -y nmap
+    elif [ "${os}" == "oracle" ]; then
+      sudo dnf install -y nmap
+    elif [ "${os}" == "amazonlinux2" ]; then
+      sudo yum install -y nmap
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install nmap
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add git
+    fi
+  fi
+
+  if ! command -v netdiscover > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y netdiscover
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y netdiscover
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install netdiscover
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add netdiscover
+    fi
+  fi
+
+  if ! command -v dirb > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y dirb
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y dirb
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install dirb
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add dirb
+    fi
+  fi
+
+  if ! command -v wireshark > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y wireshark
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y wireshark
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install wireshark
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add wireshark
+    fi
+  fi
+
+  if ! command -v nbtscan > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y nbtscan
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y nbtscan
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install nbtscan
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add nbtscan
+    fi
+  fi
+
+
+# wget https://archive.kali.org/archive-key.asc
+# gpg --no-default-keyring --keyring /etc/apt/trusted.gpg.d/kali-repository.gpg --import ./archive-key.asc
+# armitage
+# openvas
+# unicornscan
+
+  if ! command -v vim > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y vim
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y vim
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install vim
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add vim
+    fi
+  fi
+
+  if ! command -v locate > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y mlocate
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y mlocate
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install mlocate
+    fi
+  fi
+
+  # environment variable display dont use,
+  if ! command -v xclip > /dev/null && [ -z "${DISPLAY}" ] ; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y xclip
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y xclip
+    elif [ "${os}" == "amazonlinux2" ]; then
+      sudo amazon-linux-extras install epel -y
+      sudo yum install -y xclip
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install xclipboard
+    fi
+  fi
+
+  # install pwmake, pwmake generate password following os security policy.
+  if ! command -v pwmake > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y libpwquality-tools
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y libpwquality
+    elif [ "${os}" == "amazonlinux2" ]; then
+      sudo yum install -y libpwquality
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install libpwquality
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add libpwquality
+    fi
+  fi
+
+}
+
 function register_subscription {
 
   local os=$(os_type)
