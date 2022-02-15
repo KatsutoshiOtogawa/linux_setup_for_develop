@@ -285,6 +285,19 @@ function install_essential {
     fi
   fi
 
+  if ! command -v curl > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y curl
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y curl
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install curl
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add curl
+    fi
+  fi
+
   if ! command -v vim > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y vim
@@ -294,7 +307,7 @@ function install_essential {
       sudo zypper -y install vim
     fi
     elif [ "${os}" == "OpenBSD" ]; then
-      sudo pkg_add git
+      sudo pkg_add vim
     fi
   fi
 
