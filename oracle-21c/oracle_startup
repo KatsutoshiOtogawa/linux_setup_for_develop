@@ -1,0 +1,52 @@
+#!/usr/bin/bash
+#
+# utils, often use.
+
+#######################################
+# check super user.
+# Globals:
+#   UID
+#   EUID
+# Arguments:
+#   None
+# Outputs:
+#   None
+# Returns:
+#   0 if root user, non-zero on non root user.
+# Example:
+#   is_useruser #=> 0 root user
+#######################################
+function is_superuser {
+
+  if [ ${UID} = "0" ] || [ ${EUID} = "0" ]; then
+    return 0
+  fi
+  return 1
+}
+
+function main {
+  # if getent passwd oracle > /dev/null; then
+  #   postgresもそうだが、必ずrootの権限でなくてpostgresやoracleの権限で実行する必要がある。
+  #   # mount,open and start oracle instant.
+  #   su - oracle -c "echo startup; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba"
+  #   su - oracle -c "/opt/oracle/product/18c/dbhomeXE/bin/lsnrctl start"
+  # fi
+
+
+  if [ $(whoami) = "oracle" ]; then
+    # それぞれのコマンドがoracleかrootしかつかないのでこれで良い。
+    echo "startup;" | /opt/oracle/product/21c/dbhomeXE/bin/sqlplus / as sysdba
+    /opt/oracle/product/21c/dbhomeXE/bin/lsnrctl start
+  elif is_superuser; then
+    # 再起処理
+    su - oracle -c "/usr/local/bin/oracle_startup"
+    # su - oracle -c "echo startup; | /opt/oracle/product/18c/dbhomeXE/bin/sqlplus / as sysdba"
+    # su - oracle -c "/opt/oracle/product/18c/dbhomeXE/bin/lsnrctl start"
+  else
+    echo "require oracle or root user priviledge!" >&2
+    return 1
+  fi
+
+}
+
+main $@
