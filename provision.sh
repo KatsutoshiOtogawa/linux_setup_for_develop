@@ -144,7 +144,7 @@ function install_vscode {
 
   eval "$(
     cat ${file_path}/vscode_extension.txt | \
-    xargs -I {} echo code --install-extension {};
+    xargs -I {} code --install-extension {};
   )"
 }
 
