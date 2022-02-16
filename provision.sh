@@ -427,9 +427,25 @@ function install_offensive_security {
     fi
   fi
 
-
+echo "deb http://http.kali.org/kali kali-last-snapshot main contrib non-free" >> /etc/apt/sources.list
+echo "deb-src http://http.kali.org/kali kali-last-snapshot main contrib non-free" >> /etc/apt/sources.list
 # wget https://archive.kali.org/archive-key.asc
 # gpg --no-default-keyring --keyring /etc/apt/trusted.gpg.d/kali-repository.gpg --import ./archive-key.asc
+
+# Pin: release a=stable
+# Pin-Priority: 900
+
+# Package: *
+# Pin: release a=testing
+# Pin-Priority: 99
+
+# Package: *
+# Pin: release a=unstable
+# Pin-Priority: 89
+
+#  >> /etc/apt/preferences
+wget -qO- https://archive.kali.org/archive-key.asc | sudo apt-key add
+
 # armitage
 # openvas
 # unicornscan
