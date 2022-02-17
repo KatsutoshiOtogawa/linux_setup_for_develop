@@ -375,6 +375,18 @@ function install_offensive_security {
   fi
   if ! command -v msfdb > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      # depends on debian
+      # metasploit-framework : Depends: ruby (>= 1:2.7) but 1:2.5.1 is to be installed
+      #                   Depends: libc6 (>= 2.33) but 2.28-10 is to be installed
+      #                   Depends: libpq5 (>= 14~beta3) but 11.14-0+deb10u1 is to be installed
+      #                   Depends: libruby2.7 (>= 2.7.0) but it is not going to be installed
+      #                   Depends: libstdc++6 (>= 11) but 8.3.0-6 is to be installed
+      # /usr/bin/perl: error while loading shared libraries: libcrypt.so.1: cannot open shared object file: No such file or directory
+      # dpkg: error processing package libc6:amd64 (--configure):
+      #  installed libc6:amd64 package post-installation script subprocess returned error exit status 127
+      # Errors were encountered while processing:
+      #  libc6:amd64
+      # sudo apt install -y ruby libc6 libpq5 libruby2.7 libstdc++6 -t kali-last-snapshot
       curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall
       chmod u+x msfinstall
       sudo ./msfinstall
@@ -568,6 +580,19 @@ function install_offensive_security {
     fi
   fi
 
+  if ! command -v zaproxy > /dev/null || ! command -v owasp-zap > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y zaproxy
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y zaproxy
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install zaproxy
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add zaproxy
+    fi
+  fi
+
   if ! command -v unicornscan > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y unicornscan
@@ -581,6 +606,151 @@ function install_offensive_security {
     fi
   fi
 
+  if ! command -v weevely > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y weevely
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y weevely
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install weevely
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add weevely
+    fi
+  fi
+
+  if ! command -v beef-xss > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y beef-xss
+      sudo systemctl disable beef-xss
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y beef-xss
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install beef-xss
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add beef-xss
+    fi
+  fi
+
+  if ! command -v hydra > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y hydra-gtk
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y hydra-gtk
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install hydra-gtk
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add hydra-gtk
+    fi
+  fi
+
+  if ! command -v patator > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y patator
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y patator
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install patator
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add patator
+    fi
+  fi
+
+  if ! command -v enum4linux > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y enum4linux
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y enum4linux
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install enum4linux
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add enum4linux
+    fi
+  fi
+
+  if ! command -v macchanger > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y macchanger
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y macchanger
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install macchanger
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add macchanger
+    fi
+  fi
+
+  if ! command -v aircrack-ng > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y aircrack-ng
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y aircrack-ng
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install aircrack-ng
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add aircrack-ng
+    fi
+  fi
+
+  if ! command -v kismet > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y kismet
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y kismet
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install kismet
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add kismet
+    fi
+  fi
+
+  if ! command -v wifite > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y wifite
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y wifite
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install wifite
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add wifite
+    fi
+  fi
+
+  if ! command -v fern-wifi-cracker > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y fern-wifi-cracker
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y fern-wifi-cracker
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install fern-wifi-cracker
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add fern-wifi-cracker
+    fi
+  fi
+
+  if ! command -v anonsurf > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      : pass
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      : pass
+    elif [ "${os}" == "SuSE" ]; then
+      : pass
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      : pass
+    fi
+  fi
+
+  # armitage depends on matasplot-framework
   if ! command -v armitage > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y armitage
@@ -596,6 +766,7 @@ function install_offensive_security {
   if ! command -v openvas > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y openvas
+      sudo systemctl disable openvas
     elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
       sudo dnf install -y openvas
     elif [ "${os}" == "SuSE" ]; then
@@ -605,7 +776,7 @@ function install_offensive_security {
       sudo pkg_add openvas
     fi
   fi
-  if ! command -v openvas > /dev/null; then
+  if ! command -v burpsuite > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y burpsuite
     elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
@@ -615,6 +786,53 @@ function install_offensive_security {
     fi
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add burpsuite
+    fi
+  fi
+
+  if ! command -v exploitdb > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y exploitdb
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y exploitdb
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install exploitdb
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add exploitdb
+    fi
+  fi
+
+}
+
+function install_virtualbox {
+
+  local os=$(os_type)
+
+  if ! command -v virtualbox > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      wget https://download.virtualbox.org/virtualbox/6.1.14/virtualbox-6.1_6.1.14-140239~Ubuntu~bionic_amd64.deb
+      sudo apt install -y ./virtualbox*.deb
+      rm ./virtualbox*.deb
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y virtualbox
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install virtualbox
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add virtualbox
+    fi
+  fi
+
+  if ! command -v vagrant > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y vagrant
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y vagrant
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install vagrant
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add vagrant
     fi
   fi
 
@@ -651,6 +869,26 @@ function set_locale {
     # if sudo grep LC_ALL= /root/.bash_profile > /dev/null; then
     #   sudo echo export LC_ALL=C >> /root/.bashrc
     # fi
+  fi
+
+}
+
+function set_input_method {
+
+  local os=$(os_type)
+
+  if ! command -v fcitx-configtool > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y fcitx-mozc
+      # after reboot, execute "fcitx-configtool" and add mozc.
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y fcitx-mozc
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install fcitx-mozc
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add fcitx-mozc
+    fi
   fi
 
 }
