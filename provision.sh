@@ -356,6 +356,23 @@ function install_essential {
 function install_offensive_security {
 
   local os=$(os_type)
+  local file_path=$(dirname $0)
+
+  # add kali repository.
+  if [ "${os}" == "debian" ]; then
+    echo "# kali-last-snapshot is " >> /etc/apt/sources.list
+    echo "deb http://http.kali.org/kali kali-last-snapshot main contrib non-free" >> /etc/apt/sources.list
+    echo "deb-src http://http.kali.org/kali kali-last-snapshot main contrib non-free" >> /etc/apt/sources.list
+    cat < $file_path/etc/apt/preferences >> /etc/apt/preferences
+    if cat /etc/debian_version | grep 10. > /dev/null; then
+      wget -qO- https://archive.kali.org/archive-key.asc | sudo apt-key add
+    # Since apt-key is deprecated in debian 11 and later, use below.
+    # apt-key will be removed in debian 12.
+    # elif cat /etc/debian_version | grep 11. > /dev/null; then
+    #   wget https://archive.kali.org/archive-key.asc
+    #   gpg --no-default-keyring --keyring /etc/apt/trusted.gpg.d/kali-repository.gpg --import ./archive-key.asc
+    fi
+  fi
   if ! command -v nmap > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y nmap
@@ -427,79 +444,41 @@ function install_offensive_security {
     fi
   fi
 
-echo "deb http://http.kali.org/kali kali-last-snapshot main contrib non-free" >> /etc/apt/sources.list
-echo "deb-src http://http.kali.org/kali kali-last-snapshot main contrib non-free" >> /etc/apt/sources.list
-# wget https://archive.kali.org/archive-key.asc
-# gpg --no-default-keyring --keyring /etc/apt/trusted.gpg.d/kali-repository.gpg --import ./archive-key.asc
-
-# Pin: release a=stable
-# Pin-Priority: 900
-
-# Package: *
-# Pin: release a=testing
-# Pin-Priority: 99
-
-# Package: *
-# Pin: release a=unstable
-# Pin-Priority: 89
-
-#  >> /etc/apt/preferences
-wget -qO- https://archive.kali.org/archive-key.asc | sudo apt-key add
-
-# armitage
-# openvas
-# unicornscan
-
-  if ! command -v vim > /dev/null; then
+  if ! command -v unicornscan > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
-      sudo apt install -y vim
+      sudo apt install -y unicornscan
     elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
-      sudo dnf install -y vim
+      sudo dnf install -y unicornscan
     elif [ "${os}" == "SuSE" ]; then
-      sudo zypper -y install vim
+      sudo zypper -y install unicornscan
     fi
     elif [ "${os}" == "OpenBSD" ]; then
-      sudo pkg_add vim
+      sudo pkg_add unicornscan
     fi
   fi
 
-  if ! command -v locate > /dev/null; then
+  if ! command -v armitage > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
-      sudo apt install -y mlocate
+      sudo apt install -y armitage
     elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
-      sudo dnf install -y mlocate
+      sudo dnf install -y armitage
     elif [ "${os}" == "SuSE" ]; then
-      sudo zypper -y install mlocate
-    fi
-  fi
-
-  # environment variable display dont use,
-  if ! command -v xclip > /dev/null && [ -z "${DISPLAY}" ] ; then
-    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
-      sudo apt install -y xclip
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
-      sudo dnf install -y xclip
-    elif [ "${os}" == "amazonlinux2" ]; then
-      sudo amazon-linux-extras install epel -y
-      sudo yum install -y xclip
-    elif [ "${os}" == "SuSE" ]; then
-      sudo zypper -y install xclipboard
-    fi
-  fi
-
-  # install pwmake, pwmake generate password following os security policy.
-  if ! command -v pwmake > /dev/null; then
-    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
-      sudo apt install -y libpwquality-tools
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
-      sudo dnf install -y libpwquality
-    elif [ "${os}" == "amazonlinux2" ]; then
-      sudo yum install -y libpwquality
-    elif [ "${os}" == "SuSE" ]; then
-      sudo zypper -y install libpwquality
+      sudo zypper -y install armitage
     fi
     elif [ "${os}" == "OpenBSD" ]; then
-      sudo pkg_add libpwquality
+      sudo pkg_add armitage
+    fi
+  fi
+  if ! command -v openvas > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y openvas
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y openvas
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install openvas
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add openvas
     fi
   fi
 

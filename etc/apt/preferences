@@ -1,0 +1,4 @@
+# Kali posteritory to Debian.
+Package: *
+Pin: release o=Kali
+Pin-Priority: 101
