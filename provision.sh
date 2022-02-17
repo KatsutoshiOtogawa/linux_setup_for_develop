@@ -824,8 +824,15 @@ function install_virtualbox {
   fi
 
   if ! command -v vagrant > /dev/null; then
-    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
-      sudo apt install -y vagrant
+    if [ "${os}" == "debian" ]; then
+      curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+      echo "# vagrant repository" >> /etc/apt/sources.list
+      echo "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" >> /etc/apt/sources.list
+      sudo apt-get update && sudo apt-get install vagrant
+    elif [ "${os}" == "ubuntu" ]; then
+      curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+      sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+      sudo apt-get update && sudo apt-get install vagrant
     elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
       sudo dnf install -y vagrant
     elif [ "${os}" == "SuSE" ]; then
