@@ -353,6 +353,137 @@ function install_essential {
 
 }
 
+function install_offensive_security {
+
+  local os=$(os_type)
+  local file_path=$(dirname $0)
+
+  # add kali repository.
+  if [ "${os}" == "debian" ]; then
+    echo "# kali-last-snapshot is " >> /etc/apt/sources.list
+    echo "deb http://http.kali.org/kali kali-last-snapshot main contrib non-free" >> /etc/apt/sources.list
+    echo "deb-src http://http.kali.org/kali kali-last-snapshot main contrib non-free" >> /etc/apt/sources.list
+    cat < $file_path/etc/apt/preferences >> /etc/apt/preferences
+    if cat /etc/debian_version | grep 10. > /dev/null; then
+      wget -qO- https://archive.kali.org/archive-key.asc | sudo apt-key add
+    # Since apt-key is deprecated in debian 11 and later, use below.
+    # apt-key will be removed in debian 12.
+    # elif cat /etc/debian_version | grep 11. > /dev/null; then
+    #   wget https://archive.kali.org/archive-key.asc
+    #   gpg --no-default-keyring --keyring /etc/apt/trusted.gpg.d/kali-repository.gpg --import ./archive-key.asc
+    fi
+  fi
+  if ! command -v nmap > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y nmap
+    elif [ "${os}" == "fedora" ]; then
+      sudo dnf install -y nmap
+    elif [ "${os}" == "rhel" ]; then
+      sudo dnf install -y nmap
+    elif [ "${os}" == "oracle" ]; then
+      sudo dnf install -y nmap
+    elif [ "${os}" == "amazonlinux2" ]; then
+      sudo yum install -y nmap
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install nmap
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add git
+    fi
+  fi
+
+  if ! command -v netdiscover > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y netdiscover
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y netdiscover
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install netdiscover
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add netdiscover
+    fi
+  fi
+
+  if ! command -v dirb > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y dirb
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y dirb
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install dirb
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add dirb
+    fi
+  fi
+
+  if ! command -v wireshark > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y wireshark
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y wireshark
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install wireshark
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add wireshark
+    fi
+  fi
+
+  if ! command -v nbtscan > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y nbtscan
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y nbtscan
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install nbtscan
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add nbtscan
+    fi
+  fi
+
+  if ! command -v unicornscan > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y unicornscan
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y unicornscan
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install unicornscan
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add unicornscan
+    fi
+  fi
+
+  if ! command -v armitage > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y armitage
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y armitage
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install armitage
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add armitage
+    fi
+  fi
+  if ! command -v openvas > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y openvas
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y openvas
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install openvas
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add openvas
+    fi
+  fi
+
+}
+
 function register_subscription {
 
   local os=$(os_type)
