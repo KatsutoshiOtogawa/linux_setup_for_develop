@@ -373,6 +373,26 @@ function install_offensive_security {
     #   gpg --no-default-keyring --keyring /etc/apt/trusted.gpg.d/kali-repository.gpg --import ./archive-key.asc
     fi
   fi
+  if ! command -v msfdb > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall
+      chmod u+x msfinstall
+      sudo ./msfinstall
+    elif [ "${os}" == "fedora" ]; then
+      sudo dnf install -y nmap
+    elif [ "${os}" == "rhel" ]; then
+      sudo dnf install -y nmap
+    elif [ "${os}" == "oracle" ]; then
+      sudo dnf install -y nmap
+    elif [ "${os}" == "amazonlinux2" ]; then
+      sudo yum install -y nmap
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install nmap
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add git
+    fi
+  fi
   if ! command -v nmap > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y nmap
@@ -415,6 +435,110 @@ function install_offensive_security {
     fi
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add dirb
+    fi
+  fi
+  if ! command -v dirbuster > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y dirbuster
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y dirbuster
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install dirbuster
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add dirbuster
+    fi
+  fi
+  if ! command -v nikto > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y nikto
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y nikto
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install nikto
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add nikto
+    fi
+  fi
+  if ! command -v skipfish > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y skipfish
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y skipfish
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install skipfish
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add skipfish
+    fi
+  fi
+  if ! command -v wapiti > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y wapiti
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y wapiti
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install wapiti
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add wapiti
+    fi
+  fi
+
+  if ! command -v joomscan > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y joomscan
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y joomscan
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install joomscan
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add joomscan
+    fi
+  fi
+
+  if ! command -v wpscan > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      # debian repository rusy-public-suffic is oldstable. debian 3.0.3+ds-1 is to be installed
+      sudo apt install -y ruby-public-suffix -t kali-last-snapshot
+      # Depends: ruby-public-suffix (>= 4.0.3)
+      sudo apt install -y ruby-cms-scanner
+      sudo apt install -y wpscan
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y wpscan
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install wpscan
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add wpscan
+    fi
+  fi
+
+  if ! command -v sqlmap > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y sqlmap
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y sqlmap
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install sqlmap
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add sqlmap
+    fi
+  fi
+
+  if ! command -v netcat > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y netcat
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y netcat
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install netcat
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add netcat
     fi
   fi
 
@@ -479,6 +603,18 @@ function install_offensive_security {
     fi
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add openvas
+    fi
+  fi
+  if ! command -v openvas > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y burpsuite
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y burpsuite
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install burpsuite
+    fi
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add burpsuite
     fi
   fi
 
