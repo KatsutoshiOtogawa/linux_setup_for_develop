@@ -72,6 +72,8 @@ END
     os_type=SuSE
   elif ls /etc | grep arch-release > /dev/null; then
     os_type=arch
+  elif ls /etc | grep manjaro-release > /dev/null; then
+    os_type=manjaro
   elif ls /etc | grep gentoo-release > /dev/null; then
     os_type=gentoo
     # if you use BSD,
@@ -366,6 +368,34 @@ function install_offensive_security {
     cat < $file_path/etc/apt/preferences >> /etc/apt/preferences
     if cat /etc/debian_version | grep 10. > /dev/null; then
       wget -qO- https://archive.kali.org/archive-key.asc | sudo apt-key add
+    # Since apt-key is deprecated in debian 11 and later, use below.
+    # apt-key will be removed in debian 12.
+    # elif cat /etc/debian_version | grep 11. > /dev/null; then
+    #   wget https://archive.kali.org/archive-key.asc
+    #   gpg --no-default-keyring --keyring /etc/apt/trusted.gpg.d/kali-repository.gpg --import ./archive-key.asc
+    fi
+  fi
+  if [ "${os}" == "manjaro" ]; then
+    sudo pacman-mirrors --country all --api --protocols all --set-branch stable
+
+    sudo cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.org
+    sudo pacman-mirrors --country Japan
+
+    curl -O https://blackarch.org/strap.sh
+
+    chmod u+x strap.sh
+    sudo ./strap.sh
+
+    sudo cp /etc/pacman.d/blackarch-mirrorlist cp /etc/pacman.d/blackarch-mirrorlist
+
+    # sed -i.org
+
+    # echo "# kali-last-snapshot is " >> /etc/apt/sources.list
+    # echo "deb http://http.kali.org/kali kali-last-snapshot main contrib non-free" >> /etc/apt/sources.list
+    # echo "deb-src http://http.kali.org/kali kali-last-snapshot main contrib non-free" >> /etc/apt/sources.list
+    # cat < $file_path/etc/apt/preferences >> /etc/apt/preferences
+    # if cat /etc/debian_version | grep 10. > /dev/null; then
+    #   wget -qO- https://archive.kali.org/archive-key.asc | sudo apt-key add
     # Since apt-key is deprecated in debian 11 and later, use below.
     # apt-key will be removed in debian 12.
     # elif cat /etc/debian_version | grep 11. > /dev/null; then
