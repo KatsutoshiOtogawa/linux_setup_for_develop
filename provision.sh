@@ -362,17 +362,20 @@ function install_offensive_security {
 
   # add kali repository.
   if [ "${os}" == "debian" ]; then
-    echo "# kali-last-snapshot is " >> /etc/apt/sources.list
-    echo "deb http://http.kali.org/kali kali-last-snapshot main contrib non-free" >> /etc/apt/sources.list
-    echo "deb-src http://http.kali.org/kali kali-last-snapshot main contrib non-free" >> /etc/apt/sources.list
-    cat < $file_path/etc/apt/preferences >> /etc/apt/preferences
-    if cat /etc/debian_version | grep 10. > /dev/null; then
-      wget -qO- https://archive.kali.org/archive-key.asc | sudo apt-key add
-    # Since apt-key is deprecated in debian 11 and later, use below.
-    # apt-key will be removed in debian 12.
-    # elif cat /etc/debian_version | grep 11. > /dev/null; then
-    #   wget https://archive.kali.org/archive-key.asc
-    #   gpg --no-default-keyring --keyring /etc/apt/trusted.gpg.d/kali-repository.gpg --import ./archive-key.asc
+    if cat /etc/apt/preferences.d | grep kali-linux > /dev/null; then
+      echo "# kali-last-snapshot is " >> /etc/apt/sources.list
+      echo "deb http://http.kali.org/kali kali-last-snapshot main contrib non-free" >> /etc/apt/sources.list
+      echo "deb-src http://http.kali.org/kali kali-last-snapshot main contrib non-free" >> /etc/apt/sources.list
+      sudo mkdir /etc/apt/preferences.d
+      cat < $file_path/etc/apt/preferences.d/kali-linux.pref >> /etc/apt/preferences.d/kali-linux.pref
+      if cat /etc/debian_version | grep 10. > /dev/null; then
+        wget -qO- https://archive.kali.org/archive-key.asc | sudo apt-key add
+      # Since apt-key is deprecated in debian 11 and later, use below.
+      # apt-key will be removed in debian 12.
+      # elif cat /etc/debian_version | grep 11. > /dev/null; then
+      #   wget https://archive.kali.org/archive-key.asc
+      #   gpg --no-default-keyring --keyring /etc/apt/trusted.gpg.d/kali-repository.gpg --import ./archive-key.asc
+      fi
     fi
   fi
   if [ "${os}" == "manjaro" ]; then
