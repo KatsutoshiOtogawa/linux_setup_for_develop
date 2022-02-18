@@ -345,6 +345,8 @@ function install_essential {
       sudo yum install -y xclip
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install xclipboard
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S xclip
     fi
   fi
 
@@ -358,7 +360,8 @@ function install_essential {
       sudo yum install -y libpwquality
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install libpwquality
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S libpwquality
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add libpwquality
     fi
@@ -405,6 +408,8 @@ function install_offensive_security {
       grep -n .jp /etc/pacman.d/blackarch-mirrorlist | \
         sed 's/:.*//g' | \
         xargs -I {} sudo sed -i "{}s/^#//" /etc/pacman.d/blackarch-mirrorlist
+
+      sudo pacman -Syy
     fi
   fi
   if ! command -v msfdb > /dev/null; then
@@ -425,16 +430,17 @@ function install_offensive_security {
       chmod u+x msfinstall
       sudo ./msfinstall
     elif [ "${os}" == "fedora" ]; then
-      sudo dnf install -y nmap
+      sudo dnf install -y metasploit
     elif [ "${os}" == "rhel" ]; then
-      sudo dnf install -y nmap
+      sudo dnf install -y metasploit
     elif [ "${os}" == "oracle" ]; then
-      sudo dnf install -y nmap
+      sudo dnf install -y metasploit
     elif [ "${os}" == "amazonlinux2" ]; then
-      sudo yum install -y nmap
+      sudo yum install -y metasploit
     elif [ "${os}" == "SuSE" ]; then
-      sudo zypper -y install nmap
-    fi
+      sudo zypper -y install metasploit
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S metasploit
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add git
     fi
@@ -452,7 +458,8 @@ function install_offensive_security {
       sudo yum install -y nmap
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install nmap
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S nmap
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add git
     fi
@@ -465,7 +472,8 @@ function install_offensive_security {
       sudo dnf install -y netdiscover
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install netdiscover
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S netdiscover
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add netdiscover
     fi
@@ -478,7 +486,8 @@ function install_offensive_security {
       sudo dnf install -y dirb
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install dirb
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S dirb
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add dirb
     fi
