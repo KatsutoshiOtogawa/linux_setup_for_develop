@@ -888,7 +888,8 @@ function install_virtualbox {
       sudo dnf install -y virtualbox
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install virtualbox
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S virtualbox
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add virtualbox
     fi
@@ -908,7 +909,8 @@ function install_virtualbox {
       sudo dnf install -y vagrant
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install vagrant
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S vagrant
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add vagrant
     fi
