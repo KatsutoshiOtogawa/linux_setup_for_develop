@@ -70,7 +70,7 @@ END
     os_type=ubuntu
   elif ls /etc | grep SuSE-release > /dev/null; then
     os_type=SuSE
-  elif ls /etc | grep arch-release > /dev/null; then
+  elif ls /etc | grep arch-release > /dev/null && ! ls /etc | grep manjaro-release > /dev/null; then
     os_type=arch
   elif ls /etc | grep manjaro-release > /dev/null; then
     os_type=manjaro
@@ -110,6 +110,8 @@ function install_GitHubCli {
       sudo zypper addrepo https://cli.github.com/packages/rpm/gh-cli.repo
       sudo zypper -y ref
       sudo zypper -y install gh
+    elif [ "${os}" == "arch" ] ||  "${os}" == "manjaro" ; then
+      sudo pacman -S github-cli
     fi
   fi
 
@@ -139,6 +141,8 @@ function install_vscode {
     elif [ "${os}" == "SuSE" ]; then
       wget --content-disposition "https://code.visualstudio.com/sha/download?build=stable&os=linux-rpm-x64" -P .cache
       .cache/code*.deb
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      yay -Sy visual-studio-code-bin
     fi
   fi
 
@@ -211,6 +215,8 @@ function install_docker {
     elif [ "${os}" == "SuSE" ]; then
       wget --content-disposition "https://code.visualstudio.com/sha/download?build=stable&os=linux-rpm-x64" -P .cache
       .cache/code*.deb
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      pacman -S docker docker-compose
     fi
   fi
 }
@@ -281,7 +287,8 @@ function install_essential {
       sudo yum install -y git
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install git
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S git
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add git
     fi
@@ -294,7 +301,8 @@ function install_essential {
       sudo dnf install -y curl
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install curl
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacmna -S curl
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add curl
     fi
@@ -307,7 +315,8 @@ function install_essential {
       sudo dnf install -y vim
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install vim
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S vim
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add vim
     fi
@@ -320,6 +329,8 @@ function install_essential {
       sudo dnf install -y mlocate
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install mlocate
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S mlocate
     fi
   fi
 
@@ -378,35 +389,22 @@ function install_offensive_security {
       fi
     fi
   fi
-  if [ "${os}" == "manjaro" ]; then
-    sudo pacman-mirrors --country all --api --protocols all --set-branch stable
+  if [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+    if [ ! -f /etc/pacman.d/blackarch-mirrorlist ]; then
+      sudo pacman-mirrors --country all --api --protocols all --set-branch stable
 
-    sudo cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.org
-    sudo pacman-mirrors --country Japan
+      sudo cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.org
+      sudo pacman-mirrors --country Japan
 
-    curl -O https://blackarch.org/strap.sh
+      curl -O https://blackarch.org/strap.sh
 
-    chmod u+x strap.sh
-    sudo ./strap.sh
+      chmod u+x strap.sh
+      sudo ./strap.sh
 
-    sudo cp /etc/pacman.d/blackarch-mirrorlist /etc/pacman.d/blackarch-mirrorlist.org
-
-    grep -n .jp /etc/pacman.d/blackarch-mirrorlist | \
-      sed 's/:.*//g' | \
-      xargs -I {} sed -i.org "${}s/^#//" /etc/pacman.d/blackarch-mirrorlist
-    # sed -i.org
-
-    # echo "# kali-last-snapshot is " >> /etc/apt/sources.list
-    # echo "deb http://http.kali.org/kali kali-last-snapshot main contrib non-free" >> /etc/apt/sources.list
-    # echo "deb-src http://http.kali.org/kali kali-last-snapshot main contrib non-free" >> /etc/apt/sources.list
-    # cat < $file_path/etc/apt/preferences >> /etc/apt/preferences
-    # if cat /etc/debian_version | grep 10. > /dev/null; then
-    #   wget -qO- https://archive.kali.org/archive-key.asc | sudo apt-key add
-    # Since apt-key is deprecated in debian 11 and later, use below.
-    # apt-key will be removed in debian 12.
-    # elif cat /etc/debian_version | grep 11. > /dev/null; then
-    #   wget https://archive.kali.org/archive-key.asc
-    #   gpg --no-default-keyring --keyring /etc/apt/trusted.gpg.d/kali-repository.gpg --import ./archive-key.asc
+      rm ./strap.sh
+      grep -n .jp /etc/pacman.d/blackarch-mirrorlist | \
+        sed 's/:.*//g' | \
+        xargs -I {} sudo sed -i "{}s/^#//" /etc/pacman.d/blackarch-mirrorlist
     fi
   fi
   if ! command -v msfdb > /dev/null; then
