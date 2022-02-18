@@ -133,3 +133,11 @@ Pin-Priority: 501
 Package: expoitdb
 Pin: release o=Kali
 Pin-Priority: 501
+
+Package: onionshare
+Pin: release o=Kali
+Pin-Priority: 501
+
+Package: tor
+Pin: release o=Kali
+Pin-Priority: 501
