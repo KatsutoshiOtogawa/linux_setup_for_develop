@@ -389,8 +389,11 @@ function install_offensive_security {
     chmod u+x strap.sh
     sudo ./strap.sh
 
-    sudo cp /etc/pacman.d/blackarch-mirrorlist cp /etc/pacman.d/blackarch-mirrorlist
+    sudo cp /etc/pacman.d/blackarch-mirrorlist /etc/pacman.d/blackarch-mirrorlist.org
 
+    grep -n .jp /etc/pacman.d/blackarch-mirrorlist | \
+      sed 's/:.*//g' | \
+      xargs -I {} sed -i.org "${}s/^#//" /etc/pacman.d/blackarch-mirrorlist
     # sed -i.org
 
     # echo "# kali-last-snapshot is " >> /etc/apt/sources.list
