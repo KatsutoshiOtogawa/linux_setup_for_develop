@@ -889,7 +889,21 @@ function install_virtualbox {
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install virtualbox
     elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      local kernel_version=$(uname -r | sed 's/\.//' | cut -c -3)
+      sudo pacman -S linux${kernel_version}-virtualbox-host-modules
+      # sudo pacman -S linux${kernel_version}-headers
       sudo pacman -S virtualbox
+      # kernelのバージョンとあっているか確認
+      # ls -1 /lib/modules | grep MANJARO
+
+      echo sudo pacman -Syu linux515 and reboot
+      sudo vboxreload
+      # sudo pacman -S dkms
+      #
+      # local virtualbox_version=$(pacman -Q virtualbox | awk -F ' ' '{print $2}' | sed 's/-.*$//')
+      # local =$(uname -m)
+      # local =$(uname -rm | sed 's| |/|' | sed 's/MANJARO/ARCH/')
+      # sudo dkms install vboxhost/$virtualbox_version -k $(uname -rm | sed 's| |/|')
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add virtualbox
     fi
