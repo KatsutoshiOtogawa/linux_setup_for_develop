@@ -44,11 +44,23 @@ function vagrant_up {
   vagrant up
 }
 
-function vagrant_destroy {
+function vagrant_is_rhel {
+
+  abc=$(vagrant ssh -c "
+    if ls /etc | grep redhat-release > /dev/null && ! ls /etc | grep oracle-release > /dev/null; then
+      echo aaa
+    fi
+  ")
+}
+function vagrant_subscription_destroy {
   vagrant ssh -c "
     sudo subscription-manager remove --all
     sudo subscription-manager unregister
   "
+}
+
+function vagrant_destroy {
+  vagrant_subscription_destroy
   vagrant destroy
 }
 
