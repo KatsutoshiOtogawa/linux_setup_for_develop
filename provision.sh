@@ -915,16 +915,21 @@ function install_virtualbox {
       echo "# vagrant repository" >> /etc/apt/sources.list
       echo "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" >> /etc/apt/sources.list
       sudo apt-get update && sudo apt-get install vagrant
+      vagrant plugin install vagrant-vbguest
     elif [ "${os}" == "ubuntu" ]; then
       curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
       sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
       sudo apt-get update && sudo apt-get install vagrant
+      vagrant plugin install vagrant-vbguest
     elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
       sudo dnf install -y vagrant
+      vagrant plugin install vagrant-vbguest
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install vagrant
+      vagrant plugin install vagrant-vbguest
     elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
       sudo pacman -S vagrant
+      vagrant plugin install vagrant-vbguest
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add vagrant
     fi
