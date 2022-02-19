@@ -499,7 +499,8 @@ function install_offensive_security {
       sudo dnf install -y dirbuster
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install dirbuster
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S dirbuster
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add dirbuster
     fi
@@ -511,7 +512,8 @@ function install_offensive_security {
       sudo dnf install -y nikto
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install nikto
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S nikto
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add nikto
     fi
@@ -523,7 +525,8 @@ function install_offensive_security {
       sudo dnf install -y skipfish
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install skipfish
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -y skipfish
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add skipfish
     fi
@@ -535,7 +538,8 @@ function install_offensive_security {
       sudo dnf install -y wapiti
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install wapiti
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S wapiti
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add wapiti
     fi
@@ -548,7 +552,8 @@ function install_offensive_security {
       sudo dnf install -y joomscan
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install joomscan
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S joomscan
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add joomscan
     fi
@@ -565,7 +570,8 @@ function install_offensive_security {
       sudo dnf install -y wpscan
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install wpscan
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S wpscan
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add wpscan
     fi
@@ -578,7 +584,8 @@ function install_offensive_security {
       sudo dnf install -y sqlmap
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install sqlmap
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S sqlmap
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add sqlmap
     fi
@@ -591,7 +598,8 @@ function install_offensive_security {
       sudo dnf install -y netcat
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install netcat
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S netcan
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add netcat
     fi
@@ -604,7 +612,8 @@ function install_offensive_security {
       sudo dnf install -y wireshark
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install wireshark
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S wireshark
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add wireshark
     fi
@@ -617,7 +626,8 @@ function install_offensive_security {
       sudo dnf install -y nbtscan
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install nbtscan
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S nbtscan
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add nbtscan
     fi
@@ -630,7 +640,8 @@ function install_offensive_security {
       sudo dnf install -y zaproxy
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install zaproxy
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S zaproxy
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add zaproxy
     fi
@@ -643,7 +654,8 @@ function install_offensive_security {
       sudo dnf install -y unicornscan
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install unicornscan
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S unicornscan
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add unicornscan
     fi
@@ -656,7 +668,8 @@ function install_offensive_security {
       sudo dnf install -y weevely
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install weevely
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S weevely
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add weevely
     fi
@@ -670,7 +683,8 @@ function install_offensive_security {
       sudo dnf install -y beef-xss
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install beef-xss
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S beef
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add beef-xss
     fi
@@ -683,7 +697,9 @@ function install_offensive_security {
       sudo dnf install -y hydra-gtk
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install hydra-gtk
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S hydra-gtk
+      # hydrapaperのほうがメジャーでは？
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add hydra-gtk
     fi
@@ -696,7 +712,8 @@ function install_offensive_security {
       sudo dnf install -y patator
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install patator
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S patator
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add patator
     fi
@@ -709,7 +726,8 @@ function install_offensive_security {
       sudo dnf install -y enum4linux
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install enum4linux
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S enum4linux
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add enum4linux
     fi
@@ -722,7 +740,8 @@ function install_offensive_security {
       sudo dnf install -y macchanger
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install macchanger
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S macchanger
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add macchanger
     fi
@@ -735,7 +754,8 @@ function install_offensive_security {
       sudo dnf install -y aircrack-ng
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install aircrack-ng
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S aircrack-ng
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add aircrack-ng
     fi
@@ -748,7 +768,8 @@ function install_offensive_security {
       sudo dnf install -y kismet
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install kismet
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S kismet
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add kismet
     fi
@@ -761,7 +782,8 @@ function install_offensive_security {
       sudo dnf install -y wifite
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install wifite
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S wifite
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add wifite
     fi
@@ -774,7 +796,8 @@ function install_offensive_security {
       sudo dnf install -y fern-wifi-cracker
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install fern-wifi-cracker
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S fern-wifi-cracker
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add fern-wifi-cracker
     fi
@@ -787,7 +810,8 @@ function install_offensive_security {
       : pass
     elif [ "${os}" == "SuSE" ]; then
       : pass
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      : pass
     elif [ "${os}" == "OpenBSD" ]; then
       : pass
     fi
@@ -801,7 +825,8 @@ function install_offensive_security {
       sudo dnf install -y armitage
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install armitage
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S armitage
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add armitage
     fi
@@ -814,7 +839,8 @@ function install_offensive_security {
       sudo dnf install -y openvas
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install openvas
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S openvas
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add openvas
     fi
@@ -826,7 +852,8 @@ function install_offensive_security {
       sudo dnf install -y burpsuite
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install burpsuite
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S burpsuite
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add burpsuite
     fi
@@ -839,7 +866,8 @@ function install_offensive_security {
       sudo dnf install -y exploitdb
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install exploitdb
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S expoitdb
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add exploitdb
     fi
