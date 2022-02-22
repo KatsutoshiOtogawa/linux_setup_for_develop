@@ -272,6 +272,11 @@ function load_env {
 function install_essential {
 
   local os=$(os_type)
+
+  if [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+    sudo pacman -S yay
+  fi
+
   if ! command -v git > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y git
@@ -955,20 +960,20 @@ function set_locale {
 
   local os=$(os_type)
 
-  echo export LANG=en_US.UTF-8 >> $HOME/.bashrc
-
-  if [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+  if [ "${os}" == "debian" ]; then
+    :pass
+  elif [ "${os}" == "ubuntu" ]; then
+    :pass
+  elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
     # fix language pack missing. this is a rhel8 and centos8 bug. (https://unixcop.com/fix-problem-failed-to-set-locale-defaulting-to-c-utf-8-in-centos-8-rhel-8/)
     sudo dnf install -y glibc-all-langpacks langpacks-en
-
-    # if grep LC_ALL= $HOME/.bash_profile > /dev/null; then
-    #   echo export LC_ALL=C >> $HOME/.bashrc
-    # fi
-    # if sudo grep LC_ALL= /root/.bash_profile > /dev/null; then
-    #   sudo echo export LC_ALL=C >> /root/.bashrc
-    # fi
+  elif [ "${os}" == "SuSE" ]; then
+    :pass
+  elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+    :pass
+  elif [ "${os}" == "OpenBSD" ]; then
+    :pass
   fi
-
 }
 
 function set_input_method {
@@ -983,10 +988,12 @@ function set_input_method {
       sudo dnf install -y fcitx-mozc
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install fcitx-mozc
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S fctix-mozc fctix-configtool
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add fcitx-mozc
     fi
+    echo "after reboot, execute fcitx-configtool and add mozc."
   fi
 
 }
