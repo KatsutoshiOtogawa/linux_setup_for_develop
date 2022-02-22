@@ -272,6 +272,11 @@ function load_env {
 function install_essential {
 
   local os=$(os_type)
+
+  if [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+    sudo pacman -S yay
+  fi
+
   if ! command -v git > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y git
@@ -873,6 +878,68 @@ function install_offensive_security {
 
 }
 
+function install_vmware {
+
+  local os=$(os_type)
+
+  if ! command -v vmplayer > /dev/null; then
+    if [ ! -d ./.cache ]; then
+      mkdir ./.cache
+    fi
+
+    local user_agent="Mozilla/5.0 (X11; Linux x86_64; rv:97.0) Gecko/20100101 Firefox/97.0"
+    local vmware_player_url=https://www.vmware.com/go/getplayer-linux
+    wget --content-disposition $vmware_player_url --user-agent="$(echo ${user_agent})" -P .cache/
+
+    chmod u+x .cache/VMware-Player-Full*.bundle
+    ./.cache/VMware-Player-Full*.bundle
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      : pass
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      : pass
+    elif [ "${os}" == "SuSE" ]; then
+      : pass
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+
+      local kernel_version=$(uname -r | sed 's/\.//' | cut -c -3)
+      # these tool using vmware player compile.
+      sudo pacman -S linux${kerel_version}-headers make
+      echo "if you use old linux kernel, update kenerl minor version."
+      echo "sudo pacman -Syu linux${kernel_version} and reboot"
+
+    fi
+
+    echo "open vmware-player and set initial config!"
+  fi
+
+  if ! command -v vagrant > /dev/null; then
+    if [ "${os}" == "debian" ]; then
+      curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+      echo "# vagrant repository" >> /etc/apt/sources.list
+      echo "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" >> /etc/apt/sources.list
+      sudo apt-get update && sudo apt-get install vagrant
+      vagrant plugin install vagrant-vbguest
+    elif [ "${os}" == "ubuntu" ]; then
+      curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+      sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+      sudo apt-get update && sudo apt-get install vagrant
+      vagrant plugin install vagrant-vbguest
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y vagrant
+      vagrant plugin install vagrant-vbguest
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install vagrant
+      vagrant plugin install vagrant-vbguest
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S vagrant
+      vagrant plugin install vagrant-vbguest
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add vagrant
+    fi
+  fi
+
+}
+
 function install_virtualbox {
 
   local os=$(os_type)
@@ -955,20 +1022,20 @@ function set_locale {
 
   local os=$(os_type)
 
-  echo export LANG=en_US.UTF-8 >> $HOME/.bashrc
-
-  if [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+  if [ "${os}" == "debian" ]; then
+    :pass
+  elif [ "${os}" == "ubuntu" ]; then
+    :pass
+  elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
     # fix language pack missing. this is a rhel8 and centos8 bug. (https://unixcop.com/fix-problem-failed-to-set-locale-defaulting-to-c-utf-8-in-centos-8-rhel-8/)
     sudo dnf install -y glibc-all-langpacks langpacks-en
-
-    # if grep LC_ALL= $HOME/.bash_profile > /dev/null; then
-    #   echo export LC_ALL=C >> $HOME/.bashrc
-    # fi
-    # if sudo grep LC_ALL= /root/.bash_profile > /dev/null; then
-    #   sudo echo export LC_ALL=C >> /root/.bashrc
-    # fi
+  elif [ "${os}" == "SuSE" ]; then
+    :pass
+  elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+    :pass
+  elif [ "${os}" == "OpenBSD" ]; then
+    :pass
   fi
-
 }
 
 function set_input_method {
@@ -983,10 +1050,12 @@ function set_input_method {
       sudo dnf install -y fcitx-mozc
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install fcitx-mozc
-    fi
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S fctix-mozc fctix-configtool
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add fcitx-mozc
     fi
+    echo "after reboot, execute fcitx-configtool and add mozc."
   fi
 
 }
