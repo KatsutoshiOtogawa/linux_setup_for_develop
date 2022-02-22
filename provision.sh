@@ -325,6 +325,10 @@ function install_essential {
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add vim
     fi
+    su - -c 'echo "# set default browser for root." >> /root/.bashrc'
+    su - -c 'echo "export EDITOR=$(commnad -v vim)" >> /root/.bashrc'
+    echo "# set default browser for user." >> ~/.bashrc
+    echo "export EDITOR=$(commnad -v vim)" >> ~/.bashrc
   fi
 
   if ! command -v locate > /dev/null; then
