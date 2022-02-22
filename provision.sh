@@ -394,11 +394,6 @@ function install_offensive_security {
   fi
   if [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
     if [ ! -f /etc/pacman.d/blackarch-mirrorlist ]; then
-      sudo pacman-mirrors --country all --api --protocols all --set-branch stable
-
-      sudo cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.org
-      sudo pacman-mirrors --country Japan
-
       curl -O https://blackarch.org/strap.sh
 
       chmod u+x strap.sh
@@ -409,6 +404,9 @@ function install_offensive_security {
         sed 's/:.*//g' | \
         xargs -I {} sudo sed -i "{}s/^#//" /etc/pacman.d/blackarch-mirrorlist
 
+      #
+      sudo pacman-mirrors --country all --api --protocols all --set-branch stable
+      sudo pacman-mirrors --fasttrack
       sudo pacman -Syy
     fi
   fi
@@ -896,7 +894,8 @@ function install_virtualbox {
       # kernelのバージョンとあっているか確認
       # ls -1 /lib/modules | grep MANJARO
 
-      echo sudo pacman -Syu linux515 and reboot
+      echo "if you use old linux kernel, update kenerl minor version."
+      echo "sudo pacman -Syu linux${kernel_version} and reboot"
       sudo vboxreload
       # sudo pacman -S dkms
       #
@@ -1043,6 +1042,7 @@ function install_system_backup_and_snapshot {
 }
 
 function install_security_update {
+  local os=$(os_type)
   if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
     # update package list
     sudo apt update
@@ -1079,6 +1079,25 @@ function install_font_language {
     : pass
   elif [ "${os}" == "OpenBSD" ]; then
     # sudo pkg_add mixfont-mplus-ipa-20060520p7 mplus-fonts-063a
+  fi
+}
+
+function set_mirror_stable_and_fast_mirror {
+
+  local os=$(os_type)
+  if [ "${os}" == "debian" ]; then
+  elif [ "${os}" == "ubuntu" ]; then
+  elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    sudo dnf install -y vagrant
+    vagrant plugin install vagrant-vbguest
+  elif [ "${os}" == "SuSE" ]; then
+    sudo zypper -y install vagrant
+    vagrant plugin install vagrant-vbguest
+  elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+    sudo pacman-mirrors --country all --api --protocols all --set-branch stable
+    sudo pacman-mirrors --fasttrack
+  elif [ "${os}" == "OpenBSD" ]; then
+    sudo pkg_add vagrant
   fi
 }
 
