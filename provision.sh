@@ -878,6 +878,68 @@ function install_offensive_security {
 
 }
 
+function install_vmware {
+
+  local os=$(os_type)
+
+  if ! command -v vmplayer > /dev/null; then
+    if [ ! -d ./.cache ]; then
+      mkdir ./.cache
+    fi
+
+    local user_agent="Mozilla/5.0 (X11; Linux x86_64; rv:97.0) Gecko/20100101 Firefox/97.0"
+    local vmware_player_url=https://www.vmware.com/go/getplayer-linux
+    wget --content-disposition $vmware_player_url --user-agent="$(echo ${user_agent})" -P .cache/
+
+    chmod u+x .cache/VMware-Player-Full*.bundle
+    ./.cache/VMware-Player-Full*.bundle
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      : pass
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      : pass
+    elif [ "${os}" == "SuSE" ]; then
+      : pass
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+
+      local kernel_version=$(uname -r | sed 's/\.//' | cut -c -3)
+      # these tool using vmware player compile.
+      sudo pacman -S linux${kerel_version}-headers make
+      echo "if you use old linux kernel, update kenerl minor version."
+      echo "sudo pacman -Syu linux${kernel_version} and reboot"
+
+    fi
+
+    echo "open vmware-player and set initial config!"
+  fi
+
+  if ! command -v vagrant > /dev/null; then
+    if [ "${os}" == "debian" ]; then
+      curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+      echo "# vagrant repository" >> /etc/apt/sources.list
+      echo "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" >> /etc/apt/sources.list
+      sudo apt-get update && sudo apt-get install vagrant
+      vagrant plugin install vagrant-vbguest
+    elif [ "${os}" == "ubuntu" ]; then
+      curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+      sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+      sudo apt-get update && sudo apt-get install vagrant
+      vagrant plugin install vagrant-vbguest
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+      sudo dnf install -y vagrant
+      vagrant plugin install vagrant-vbguest
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install vagrant
+      vagrant plugin install vagrant-vbguest
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S vagrant
+      vagrant plugin install vagrant-vbguest
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add vagrant
+    fi
+  fi
+
+}
+
 function install_virtualbox {
 
   local os=$(os_type)
