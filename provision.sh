@@ -55,14 +55,14 @@ END
   if ls /etc | grep fedora-release > /dev/null; then
     os_type=fedora
     # oracle linux has redhat-relese, except oracle.
-  elif ls /etc | grep redhat-release > /dev/null && ! ls /etc | grep oracle-release > /dev/null; then
-    os_type=rhel
   elif ls /etc | grep oracle-release > /dev/null; then
     os_type=oracle
   elif ls /etc | grep centos-release > /dev/null; then
     os_type=centos
   elif cat /etc/os-release | grep "Amazon Linux 2" > /dev/null; then
     os_type=amazonlinux2
+  elif ls /etc | grep redhat-release > /dev/null; then
+    os_type=rhel
     # debian systems except ubuntu.
   elif ls /etc | grep debian_version > /dev/null; then
     os_type=debian
@@ -100,7 +100,7 @@ function install_GitHubCli {
       echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/trusted.gpg.d/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
       sudo apt update
       sudo apt install -y gh
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
       sudo dnf install -y gh
     elif [ "${os}" == "amazonlinux2" ]; then
@@ -135,7 +135,7 @@ function install_vscode {
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       wget --content-disposition "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64" -P .cache
       .cache/code*.deb
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ] ; then
       wget --content-disposition "https://code.visualstudio.com/sha/download?build=stable&os=linux-rpm-x64" -P .cache
       .cache/code*.deb
     elif [ "${os}" == "SuSE" ]; then
@@ -211,6 +211,8 @@ function install_docker {
     elif [ "${os}" == "fedora" ]; then
       : pass
     elif [ "${os}" == "rhel" ]; then
+      : pass
+    elif [ "${os}" == "centos" ]; then
       : pass
     elif [ "${os}" == "SuSE" ]; then
       wget --content-disposition "https://code.visualstudio.com/sha/download?build=stable&os=linux-rpm-x64" -P .cache
@@ -288,6 +290,8 @@ function install_essential {
       sudo dnf install -y git
     elif [ "${os}" == "oracle" ]; then
       sudo dnf install -y git
+    elif [ "${os}" == "centos" ]; then
+      sudo yum install -y git
     elif [ "${os}" == "amazonlinux2" ]; then
       sudo yum install -y git
     elif [ "${os}" == "SuSE" ]; then
@@ -302,7 +306,7 @@ function install_essential {
   if ! command -v curl > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y curl
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y curl
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install curl
@@ -316,7 +320,7 @@ function install_essential {
   if ! command -v vim > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y vim
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y vim
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install vim
@@ -334,7 +338,7 @@ function install_essential {
   if ! command -v locate > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y mlocate
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y mlocate
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install mlocate
@@ -347,7 +351,7 @@ function install_essential {
   if ! command -v xclip > /dev/null && [ -z "${DISPLAY}" ] ; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y xclip
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y xclip
     elif [ "${os}" == "amazonlinux2" ]; then
       sudo amazon-linux-extras install epel -y
@@ -363,7 +367,7 @@ function install_essential {
   if ! command -v pwmake > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y libpwquality-tools
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y libpwquality
     elif [ "${os}" == "amazonlinux2" ]; then
       sudo yum install -y libpwquality
@@ -475,7 +479,7 @@ function install_offensive_security {
   if ! command -v netdiscover > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y netdiscover
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y netdiscover
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install netdiscover
@@ -489,7 +493,7 @@ function install_offensive_security {
   if ! command -v dirb > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y dirb
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y dirb
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install dirb
@@ -502,7 +506,7 @@ function install_offensive_security {
   if ! command -v dirbuster > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y dirbuster
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y dirbuster
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install dirbuster
@@ -515,7 +519,7 @@ function install_offensive_security {
   if ! command -v nikto > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y nikto
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y nikto
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install nikto
@@ -528,7 +532,7 @@ function install_offensive_security {
   if ! command -v skipfish > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y skipfish
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y skipfish
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install skipfish
@@ -541,7 +545,7 @@ function install_offensive_security {
   if ! command -v wapiti > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y wapiti
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y wapiti
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install wapiti
@@ -555,7 +559,7 @@ function install_offensive_security {
   if ! command -v joomscan > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y joomscan
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y joomscan
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install joomscan
@@ -573,7 +577,7 @@ function install_offensive_security {
       # Depends: ruby-public-suffix (>= 4.0.3)
       sudo apt install -y ruby-cms-scanner
       sudo apt install -y wpscan
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y wpscan
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install wpscan
@@ -587,7 +591,7 @@ function install_offensive_security {
   if ! command -v sqlmap > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y sqlmap
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y sqlmap
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install sqlmap
@@ -601,7 +605,7 @@ function install_offensive_security {
   if ! command -v netcat > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y netcat
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y netcat
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install netcat
@@ -615,7 +619,7 @@ function install_offensive_security {
   if ! command -v wireshark > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y wireshark
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y wireshark
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install wireshark
@@ -629,7 +633,7 @@ function install_offensive_security {
   if ! command -v nbtscan > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y nbtscan
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y nbtscan
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install nbtscan
@@ -643,7 +647,7 @@ function install_offensive_security {
   if ! command -v zaproxy > /dev/null || ! command -v owasp-zap > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y zaproxy
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y zaproxy
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install zaproxy
@@ -657,7 +661,7 @@ function install_offensive_security {
   if ! command -v unicornscan > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y unicornscan
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y unicornscan
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install unicornscan
@@ -671,7 +675,7 @@ function install_offensive_security {
   if ! command -v weevely > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y weevely
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y weevely
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install weevely
@@ -686,7 +690,7 @@ function install_offensive_security {
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y beef-xss
       sudo systemctl disable beef-xss
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y beef-xss
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install beef-xss
@@ -700,7 +704,7 @@ function install_offensive_security {
   if ! command -v hydra > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y hydra-gtk
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y hydra-gtk
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install hydra-gtk
@@ -715,7 +719,7 @@ function install_offensive_security {
   if ! command -v patator > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y patator
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y patator
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install patator
@@ -729,7 +733,7 @@ function install_offensive_security {
   if ! command -v enum4linux > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y enum4linux
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y enum4linux
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install enum4linux
@@ -743,7 +747,7 @@ function install_offensive_security {
   if ! command -v macchanger > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y macchanger
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y macchanger
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install macchanger
@@ -757,7 +761,7 @@ function install_offensive_security {
   if ! command -v aircrack-ng > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y aircrack-ng
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y aircrack-ng
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install aircrack-ng
@@ -771,7 +775,7 @@ function install_offensive_security {
   if ! command -v kismet > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y kismet
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y kismet
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install kismet
@@ -785,7 +789,7 @@ function install_offensive_security {
   if ! command -v wifite > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y wifite
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y wifite
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install wifite
@@ -799,7 +803,7 @@ function install_offensive_security {
   if ! command -v fern-wifi-cracker > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y fern-wifi-cracker
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y fern-wifi-cracker
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install fern-wifi-cracker
@@ -813,7 +817,7 @@ function install_offensive_security {
   if ! command -v anonsurf > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       : pass
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       : pass
     elif [ "${os}" == "SuSE" ]; then
       : pass
@@ -828,7 +832,7 @@ function install_offensive_security {
   if ! command -v armitage > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y armitage
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y armitage
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install armitage
@@ -842,7 +846,7 @@ function install_offensive_security {
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y openvas
       sudo systemctl disable openvas
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y openvas
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install openvas
@@ -855,7 +859,7 @@ function install_offensive_security {
   if ! command -v burpsuite > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y burpsuite
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y burpsuite
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install burpsuite
@@ -869,7 +873,7 @@ function install_offensive_security {
   if ! command -v exploitdb > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y exploitdb
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y exploitdb
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install exploitdb
@@ -893,7 +897,7 @@ function install_libvirt {
 
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       : pass
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       : pass
     elif [ "${os}" == "SuSE" ]; then
       : pass
@@ -937,7 +941,7 @@ function install_libvirt {
       sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
       sudo apt-get update && sudo apt-get install vagrant
       vagrant plugin install vagrant-vbguest
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y vagrant
       vagrant plugin install vagrant-vbguest
     elif [ "${os}" == "SuSE" ]; then
@@ -970,7 +974,7 @@ function install_vmware {
     ./.cache/VMware-Player-Full*.bundle
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       : pass
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       : pass
     elif [ "${os}" == "SuSE" ]; then
       : pass
@@ -999,7 +1003,7 @@ function install_vmware {
       sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
       sudo apt-get update && sudo apt-get install vagrant
       vagrant plugin install vagrant-vbguest
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y vagrant
       vagrant plugin install vagrant-vbguest
     elif [ "${os}" == "SuSE" ]; then
@@ -1024,7 +1028,7 @@ function install_virtualbox {
       wget https://download.virtualbox.org/virtualbox/6.1.14/virtualbox-6.1_6.1.14-140239~Ubuntu~bionic_amd64.deb
       sudo apt install -y ./virtualbox*.deb
       rm ./virtualbox*.deb
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y virtualbox
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install virtualbox
@@ -1062,7 +1066,7 @@ function install_virtualbox {
       sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
       sudo apt-get update && sudo apt-get install vagrant
       vagrant plugin install vagrant-vbguest
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y vagrant
       vagrant plugin install vagrant-vbguest
     elif [ "${os}" == "SuSE" ]; then
@@ -1073,6 +1077,37 @@ function install_virtualbox {
       vagrant plugin install vagrant-vbguest
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add vagrant
+    fi
+  fi
+
+}
+
+function install_mkcert {
+
+  local os=$(os_type)
+
+  if ! command -v mkcert > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudp apt install -y mkcert
+      # install certutil
+      sudo apt install -y libnss3-tools
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
+      wget https://github.com/FiloSottile/mkcert/releases/download/v1.4.3/mkcert-v1.4.3-linux-amd64
+      mv mkcert* mkcert
+      sudo install ./mkcert /usr/bin/
+      rm ./mkcert
+      sudo dnf install -y nss-tools
+    elif [ "${os}" == "SuSE" ]; then
+      wget https://github.com/FiloSottile/mkcert/releases/download/v1.4.3/mkcert-v1.4.3-linux-amd64
+      mv mkcert* mkcert
+      sudo install ./mkcert /usr/bin/
+      rm ./mkcert
+      sudo zypper install mozilla-nss-tools
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S mkcert
+      sudo pacman -S nss
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add mkcert
     fi
   fi
 
@@ -1101,7 +1136,7 @@ function set_locale {
     :pass
   elif [ "${os}" == "ubuntu" ]; then
     :pass
-  elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+  elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
     # fix language pack missing. this is a rhel8 and centos8 bug. (https://unixcop.com/fix-problem-failed-to-set-locale-defaulting-to-c-utf-8-in-centos-8-rhel-8/)
     sudo dnf install -y glibc-all-langpacks langpacks-en
   elif [ "${os}" == "SuSE" ]; then
@@ -1121,7 +1156,7 @@ function set_input_method {
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y fcitx-mozc
       # after reboot, execute "fcitx-configtool" and add mozc.
-    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
       sudo dnf install -y fcitx-mozc
     elif [ "${os}" == "SuSE" ]; then
       sudo zypper -y install fcitx-mozc
@@ -1139,7 +1174,7 @@ function set_package_mirror {
 
   if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
     : pass
-  elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+  elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
     : pass
   elif [ "${os}" == "amazonlinux2" ]; then
     : pass
@@ -1231,7 +1266,7 @@ function set_mirror_stable_and_fast_mirror {
   local os=$(os_type)
   if [ "${os}" == "debian" ]; then
   elif [ "${os}" == "ubuntu" ]; then
-  elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ]; then
+  elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
     sudo dnf install -y vagrant
     vagrant plugin install vagrant-vbguest
   elif [ "${os}" == "SuSE" ]; then
