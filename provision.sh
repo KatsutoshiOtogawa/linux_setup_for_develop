@@ -303,6 +303,20 @@ function install_essential {
     fi
   fi
 
+  if ! command -v wget > /dev/null; then
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      sudo apt install -y wget
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
+      sudo dnf install -y wget
+    elif [ "${os}" == "SuSE" ]; then
+      sudo zypper -y install wget
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacmna -S wget
+    elif [ "${os}" == "OpenBSD" ]; then
+      sudo pkg_add wget
+    fi
+  fi
+
   if ! command -v curl > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
       sudo apt install -y curl
