@@ -240,6 +240,9 @@ function install_docker {
       sudo pacman -S fuse-overlayfs
     fi
 
+    sudo groupadd docker
+    sudo usermod -aG docker $USER
+
     if ! grep ^$(whoami): /etc/subuid >> /dev/null; then
       su -c 'echo "$USER:100000:65536" >> /etc/subuid'
     fi
@@ -975,7 +978,45 @@ function install_libvirt {
 
     fi
 
-    echo "open vmware-player and set initial config!"
+    # setting for non root user.
+
+    if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
+      : pass
+    elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
+      : pass
+    elif [ "${os}" == "SuSE" ]; then
+      : pass
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+
+      # setting for kvm and qemu
+      sudo usermod -aG kvm $USER
+      local user_num=$(grep -n '#user = ' /etc/libvirt/qemu.conf | cut -d ':' -f 1)
+      sudo sed -i "${user_num[0]}a user = \"$USER\"" /etc/libvirt/qemu.conf
+
+      local group_num=$(grep -n '#group = ' /etc/libvirt/qemu.conf | cut -d ':' -f 1)
+      sudo sed -i "${group_num[0]}a group = \"libvirt\"" /etc/libvirt/qemu.conf
+
+      local dynamic_ownership_num=$(grep -n '#dynamic_ownership = ' /etc/libvirt/qemu.conf | cut -d ':' -f 1)
+      sudo sed -i "${dynamic_ownership_num[0]}a dynamic_ownership = 1" /etc/libvirt/qemu.conf
+
+      # setting for libvirt
+      local unix_sock_group_num=$(grep -n '#unix_sock_group = ' /etc/libvirt/libvirtd.conf | cut -d ':' -f 1)
+      sudo sed -i "${unix_sock_group_num[0]}a unix_sock_group = \"libvirt\"" /etc/libvirt/libvirtd.conf
+
+      local unix_sock_ro_perms_num=$(grep -n '#unix_sock_ro_perms = ' /etc/libvirt/libvirtd.conf | cut -d ':' -f 1)
+      sudo sed -i "${unix_sock_ro_perms_num[0]}a unix_sock_ro_perms = \"0777\"" /etc/libvirt/libvirtd.conf
+
+      local unix_sock_rw_perms_num=$(grep -n '#unix_sock_rw_perms = ' /etc/libvirt/libvirtd.conf | cut -d ':' -f 1)
+      sudo sed -i "${unix_sock_rw_perms_num[0]}a unix_sock_rw_perms = \"0770\"" /etc/libvirt/libvirtd.conf
+
+      local auth_unix_ro_num=$(grep -n '#auth_unix_ro = ' /etc/libvirt/libvirtd.conf | cut -d ':' -f 1)
+      sudo sed -i "${auth_unix_ro_num[0]}a auth_unix_ro = \"none\"" /etc/libvirt/libvirtd.conf
+
+      local auth_unix_rw_num=$(grep -n '#auth_unix_rw = ' /etc/libvirt/libvirtd.conf | cut -d ':' -f 1)
+      sudo sed -i "${auth_unix_rw_num[0]}a auth_unix_rw = \"none\"" /etc/libvirt/libvirtd.conf
+      # /etc/libvirt/libvirtd.conf
+      sudo usermod -aG libvirt $USER
+    fi
   fi
 
   if ! command -v vagrant > /dev/null; then
@@ -1137,7 +1178,11 @@ function install_mkcert {
 
   if ! command -v mkcert > /dev/null; then
     if [ "${os}" == "debian" ] || [ "${os}" == "ubuntu" ]; then
-      sudp apt install -y mkcert
+      wget https://github.com/FiloSottile/mkcert/releases/download/v1.4.3/mkcert-v1.4.3-linux-amd64
+      mv mkcert* mkcert
+      sudo install ./mkcert /usr/bin/
+      rm ./mkcert
+      # sudp apt install -y mkcert
       # install certutil
       sudo apt install -y libnss3-tools
     elif [ "${os}" == "fedora" ] || [ "${os}" == "rhel" ] || [ "${os}" == "oracle" ] || [ "${os}" == "centos" ]; then
