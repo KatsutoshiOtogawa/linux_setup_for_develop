@@ -221,6 +221,41 @@ function install_docker {
       pacman -S docker docker-compose
     fi
   fi
+
+  # install rootless mode
+  if ! ls /home/$USER/bin | grep -e docker -e dockerd > /dev/null; then
+    if [ "${os}" == "debian" ]; then
+      : pass
+    elif [ "${os}" == "ubuntu" ]; then
+      : pass
+    elif [ "${os}" == "fedora" ]; then
+      : pass
+    elif [ "${os}" == "rhel" ]; then
+      : pass
+    elif [ "${os}" == "centos" ]; then
+      : pass
+    elif [ "${os}" == "SuSE" ]; then
+      : pass
+    elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
+      sudo pacman -S fuse-overlayfs
+    fi
+
+    if ! grep ^$(whoami): /etc/subuid >> /dev/null; then
+      su -c 'echo "$USER:100000:65536" >> /etc/subuid'
+    fi
+    if ! grep ^$(whoami): /etc/subgid >> /dev/null; then
+      su -c 'echo "$USER:100000:65536" >> /etc/subgid'
+    fi
+    su -c "echo kernel.unprivileged_userns_clone=1 >> /etc/sysctl.conf"
+    sudo sysctl --system
+    curl -fsSL https://get.docker.com/rootless | sh
+    echo export PATH=/home/$USER/bin:$PATH >> $HOME/.bashrc
+    echo export DOCKER_HOST=unix:///run/user/1000/docker.sock >> $HOME/.bashrc
+
+    # systemctl --user start docker
+    # login したときにサービスを自動化するなら下を実行
+    # sudo loginctl enable-linger $USER
+  fi
 }
 
 
