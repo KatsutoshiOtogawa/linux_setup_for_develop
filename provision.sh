@@ -1017,6 +1017,13 @@ function install_libvirt {
       # /etc/libvirt/libvirtd.conf
       sudo usermod -aG libvirt $USER
     fi
+
+    # install vagrant plugin
+    vagrant plugin install vagrant-libvirt
+    # install mutate is convert virtualbox to libvirt
+    vagrant plugin install vagrant-mutate
+
+    vagrant plugin install vagrant-vbguest vagrant-share
   fi
 
   if ! command -v vagrant > /dev/null; then
@@ -1168,6 +1175,7 @@ function install_virtualbox {
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add vagrant
     fi
+    echo export VAGRANT_DEFAULT_PROVIDER=virtualbox >> $HOME/.bashrc
   fi
 
 }
