@@ -394,7 +394,7 @@ function install_essential {
     cp $file_path/.vimrc ~/
 
     # sync template file
-    rsync -auv $file_path/vim ~/vim
+    rsync -auv $file_path/vim/ ~/vim/
   fi
 
   if ! command -v locate > /dev/null; then
