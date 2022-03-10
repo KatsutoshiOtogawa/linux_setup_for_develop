@@ -312,6 +312,7 @@ function load_env {
 function install_essential {
 
   local os=$(os_type)
+  local file_path=$(dirname $0)
 
   if [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
     sudo pacman -S yay
@@ -385,6 +386,15 @@ function install_essential {
     su - -c 'echo "export EDITOR=$(command -v vim)" >> /root/.bashrc'
     echo "# set default browser for user." >> ~/.bashrc
     echo "export EDITOR=$(command -v vim)" >> ~/.bashrc
+
+    # install vimplugins
+    curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    # set vim setting
+    cp $file_path/.vimrc ~/
+
+    # sync template file
+    rsync -auv $file_path/vim ~/vim
   fi
 
   if ! command -v locate > /dev/null; then

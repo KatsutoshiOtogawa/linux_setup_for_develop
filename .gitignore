@@ -1,6 +1,7 @@
 .cache
 .vagrant
 
-.swp
+# vim swapfile ignore
+*.swp
 
 .env
