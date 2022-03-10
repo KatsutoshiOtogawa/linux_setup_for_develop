@@ -1,4 +1,6 @@
 .cache
 .vagrant
 
+.swp
+
 .env

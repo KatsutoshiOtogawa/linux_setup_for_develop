@@ -70,7 +70,8 @@ set ruler
 set autoindent
 set smartindent
 
-autocmd BufRead,BufNewFile *.* NERDTreeToggle
+" open source tree and move to editting window
+autocmd BufRead,BufNewFile * NERDTreeToggle | wincmd w
 
 " set *.sh file highlight for coding.
 autocmd BufRead,BufNewFile *.sh set filetype=sh
