@@ -4,22 +4,22 @@
 
 " [vim plug](https://github.com/junegunn/vim-plug)
 " install vim plugin list
-" :PlugInstall -> install plugin 
+" :PlugInstall -> install plugin
 " :PlugUpdate -> install update
 call plug#begin()
 
 " [vim-surround](https://github.com/tpope/vim-surround)
-" visual mode selecting character, surround 
+" visual mode selecting character, surround
 " ex) select 'awesome' and type 'S{' write '{awesome}'.
   Plug 'tpope/vim-surround'
 
 " [vim-fugitive](https://github.com/tpope/vim-fugitive)
-" visual mode selecting character, surround 
+" visual mode selecting character, surround
 " ex) select 'awesome' and type 'S{' write '{awesome}'.
   Plug 'tpope/vim-fugitive'
 
 " [vim-gitgutter](https://github.com/airblade/vim-gitgutter)
-" visual mode selecting character, surround 
+" visual mode selecting character, surround
 " ex) select 'awesome' and type 'S{' write '{awesome}'.
   Plug 'airblade/vim-gitgutter'
 
@@ -66,6 +66,7 @@ set list
 set hlsearch
 set showmode
 set showcmd
+set clipboard+=unnamed
 set ruler
 set autoindent
 set smartindent
