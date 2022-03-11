@@ -73,11 +73,12 @@ set smartindent
 
 " [autocmd explain](https://maku77.github.io/vim/settings/autocmd.html)
 " open source tree and move to editting window
-autocmd BufRead,BufNewFile * NERDTreeToggle | wincmd w
+autocmd TabNew,VimEnter * NERDTreeToggle | wincmd l
 
 " set *.sh file highlight for coding.
 autocmd BufRead,BufNewFile *.sh set filetype=sh
 autocmd BufNewFile  *.sh  0r ~/vim/bash/skeleton.sh
+" autocmd BufNewFile  *.sh  0r ~/vim/bash/skeleton.sh | %s/command_name//g
 
 " expand tab files.
 autocmd BufRead,BufNewFile *.{sh,ps1,psd1,psm1,js,mjs,ts,py,php,cc,cs,java,json,md} set expandtab
