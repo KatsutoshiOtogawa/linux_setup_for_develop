@@ -11,6 +11,9 @@ call plug#begin()
 " [vim-surround](https://github.com/tpope/vim-surround)
 " visual mode selecting character, surround
 " ex) select 'awesome' and type 'S{' write '{awesome}'.
+" ex) select 'hello world' and type 'S<div>' write '<div>hello world</div>'
+" ex) internal '<p>Why! Why!</p>' and type 'ds<p>' write 'Why! Why!'
+" ex) internal '<h2>No! No!</h2>' and type 'cs<h2><h3>' write '<h3>No! No!</h3>'
   Plug 'tpope/vim-surround'
 
 " [vim-fugitive](https://github.com/tpope/vim-fugitive)
@@ -26,6 +29,7 @@ call plug#begin()
 " [nerdtree](https://github.com/scrooloose/nerdtree)
 " [refrence](https://qiita.com/zwirky/items/0209579a635b4f9c95ee)
 " show directory tree.
+" if you want to reload dispaley, type 'R'
 " ex)Ex command type 'NERDTreeToggle'
   Plug 'scrooloose/nerdtree'
 
@@ -74,6 +78,8 @@ set smartindent
 " [autocmd explain](https://maku77.github.io/vim/settings/autocmd.html)
 " open source tree and move to editting window
 autocmd TabNew,VimEnter * NERDTreeToggle | wincmd l
+" カレントディレクトリの場合は２中に開いてしまうので、閉じる。
+" autocmd TabNew,VimEnter . NERDTreeToggle | wincmd l
 
 " set *.sh file highlight for coding.
 autocmd BufRead,BufNewFile *.sh set filetype=sh
@@ -81,7 +87,7 @@ autocmd BufNewFile  *.sh  0r ~/vim/bash/skeleton.sh
 " autocmd BufNewFile  *.sh  0r ~/vim/bash/skeleton.sh | %s/command_name//g
 
 " expand tab files.
-autocmd BufRead,BufNewFile *.{sh,ps1,psd1,psm1,js,mjs,ts,py,php,cc,cs,java,json,md} set expandtab
+autocmd BufRead,BufNewFile *.{sh,ps1,psd1,psm1,js,mjs,ts,py,php,cc,cs,java,json,yaml,yml,html,css,scss,md} set expandtab
 
 " general programing files
 autocmd BufRead,BufNewFile *.{sh,ps1,psd1,psm1,py,php,cc,cs,java,go} set tabstop=4
