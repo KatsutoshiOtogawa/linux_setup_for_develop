@@ -64,10 +64,10 @@ END
   elif ls /etc | grep redhat-release > /dev/null; then
     os_type=rhel
     # debian systems except ubuntu.
-  elif ls /etc | grep debian_version > /dev/null; then
-    os_type=debian
   elif ls /etc | grep lsb-release > /dev/null; then
     os_type=ubuntu
+  elif ls /etc | grep debian_version > /dev/null; then
+    os_type=debian
   elif ls /etc | grep SuSE-release > /dev/null; then
     os_type=SuSE
   elif ls /etc | grep arch-release > /dev/null && ! ls /etc | grep manjaro-release > /dev/null; then
@@ -466,6 +466,15 @@ function install_offensive_security {
       #   gpg --no-default-keyring --keyring /etc/apt/trusted.gpg.d/kali-repository.gpg --import ./archive-key.asc
       fi
     fi
+  fi
+  if [ "${os}" == "gentoo" ]; then
+    sudo eselect repository enable pentoo
+
+    su -c 'echo "*/*::pentoo" >> /etc/portage/package.mask/pentoo'
+    su -c 'echo "app-eselect/eselect-metasploit::pentoo" >> /etc/portage/package.unmask'
+    emerge --sync
+
+    emerge app-eselect/eselect-metasploit
   fi
   if [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
     if [ ! -f /etc/pacman.d/blackarch-mirrorlist ]; then
