@@ -77,7 +77,9 @@ set smartindent
 
 " [autocmd explain](https://maku77.github.io/vim/settings/autocmd.html)
 " open source tree and move to editting window
-autocmd TabNew,VimEnter * NERDTreeToggle | wincmd l
+" autocmd TabNew,VimEnter * NERDTreeToggle | wincmd l
+" 隠しファイルを表示
+let NERDTreeShowHidden = 1
 " カレントディレクトリの場合は２中に開いてしまうので、閉じる。
 " autocmd TabNew,VimEnter . NERDTreeToggle | wincmd l
 
