@@ -110,6 +110,9 @@ function install_GitHubCli {
       sudo zypper addrepo https://cli.github.com/packages/rpm/gh-cli.repo
       sudo zypper -y ref
       sudo zypper -y install gh
+    elif [ "${os}" == "gentoo" ]; then
+      emerge app-containers/docker app-containers/docker-cli
+      # usermod -aG docker <username>
     elif [ "${os}" == "arch" ] ||  "${os}" == "manjaro" ; then
       sudo pacman -S github-cli
     fi
@@ -387,6 +390,19 @@ function install_essential {
     echo "# set default browser for user." >> ~/.bashrc
     echo "export EDITOR=$(command -v vim)" >> ~/.bashrc
 
+    # vim-surround
+    emerge app-vim/surround
+    emerge app-vim/fugitiv
+
+    emerge app-vim/gitgutter
+    emerge app-vim/repeat
+
+    emerge app-vim/tagbar
+    emerge app-vim/nerdtree
+    echo 'app-vim/vim-commentary' >> /etc/portage/package.accept_keywords/vim-commentary
+    app-vim/vim-commentary
+    # pangloss/vim-javascript
+    # mattn/emmet-vim
     # install vimplugins
     curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -995,6 +1011,13 @@ function install_libvirt {
       echo "if you use old linux kernel, update kenerl minor version."
       echo "sudo pacman -Syu linux${kernel_version} and reboot"
 
+    elif [ "${os}" == "gentoo" ]; then
+      emerge acct-group/libvirt  app-emulation/qemu
+
+      emerge app-emulation/virt-manager app-emulation/virt-viewer
+      emerge sys-kernel/linux-headers sys-devel/make
+      # usermod -aG libvirt <user>
+      # usermod -aG kvm <user>
     fi
 
     # setting for non root user.
@@ -1035,6 +1058,9 @@ function install_libvirt {
       sudo sed -i "${auth_unix_rw_num[0]}a auth_unix_rw = \"none\"" /etc/libvirt/libvirtd.conf
       # /etc/libvirt/libvirtd.conf
       sudo usermod -aG libvirt $USER
+    elif [ "${os}" == "gentoo" ]; then
+      emerge app-emulation/virtualbox app-emulation/virtualbox-additions
+      # usermod -aG docker <username>
     fi
 
     # install vagrant plugin
@@ -1066,6 +1092,19 @@ function install_libvirt {
     elif [ "${os}" == "arch" ] || [ "${os}" == "manjaro" ]; then
       sudo pacman -S vagrant
       vagrant plugin install vagrant-vbguest
+    elif [ "${os}" == "gentoo" ]; then
+      echo '# vagrant exists testing branch only' >> /etc/portage/package.accept_keywords/vagrant
+      echo '# if official merge request and aprove this package,remove these row.' >> /etc/portage/package.accept_keywords/vagrant
+      echo 'app-emulation/vagrant' >> /etc/portage/package.accept_keywords/vagrant
+      echo 'dev-ruby/hashicorp-checkpoint' >> /etc/portage/package.accept_keywords/vagrant
+      echo 'dev-ruby/rubyzip' >> /etc/portage/package.accept_keywords/vagrant
+      echo 'dev-ruby/vagrant_cloud' >> /etc/portage/package.accept_keywords/vagrant
+
+      emerge app-emulation/vagrant
+      # vagrant のupdateがあったらupdate
+      # emerge はversion 1.0.0がないので、 vagrant をインストールできない。
+      # emerge dev-ruby/bcrypt_pbkdf:1.0.0
+      # gem install bcrypt_pbkdf -v "1.0.0"
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add vagrant
     fi
@@ -1165,6 +1204,9 @@ function install_virtualbox {
       # local =$(uname -m)
       # local =$(uname -rm | sed 's| |/|' | sed 's/MANJARO/ARCH/')
       # sudo dkms install vboxhost/$virtualbox_version -k $(uname -rm | sed 's| |/|')
+    elif [ "${os}" == "gentoo" ]; then
+      emerge app-emulation/virtualbox-modules
+      emerge app-emulation/virtualbox app-emulation/virtualbox-additions
     elif [ "${os}" == "OpenBSD" ]; then
       sudo pkg_add virtualbox
     fi
